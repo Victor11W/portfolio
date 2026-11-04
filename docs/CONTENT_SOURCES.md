@@ -53,11 +53,11 @@ Le catalogue compte treize dossiers : onze entrées de projets de la base, une f
 
 ## CV téléchargeable
 
-Le PDF anglais est une copie exacte du document existant `candidatures/Huawei/CV_Huawei_Adaptive_CPU_Memory_8379765_EN.pdf`, dérivé de `templates/Template.tex`. Il a repassé le validateur du dépôt lors de son intégration initiale : une page A4, avec rendu inspecté. Il s’agit d’une sélection préparée auparavant pour un poste lié à l’architecture matérielle, pas d’un nouveau CV générique.
+Le 5 novembre 2026, Victor a demandé deux versions complètes pour le portfolio, en français et en anglais, comprenant tous ses projets. La limite habituelle d’une page ne s’applique pas à ces deux documents ; elle reste inchangée pour les CV de candidature.
 
-La copie publique française a été retirée le 4 novembre 2026 pour respecter la restriction de publication précisée par Victor. Son original privé est conservé. Les deux langues du site proposent explicitement le PDF anglais. Le déploiement retire aussi l’ancienne copie française du dossier web, avec sauvegarde hors de l’espace public.
+Les documents `CV_Victor_Woelffel_Complet_FR.pdf` et `CV_Victor_Woelffel_Complet_EN.pdf` sont dérivés de `templates/Template.tex` et des bases factuelles française et anglaise du dépôt personnel. Le lien de téléchargement suit la langue du site. Les sources LaTeX, bases personnelles, journaux de compilation et rendus de vérification restent hors de ce dépôt public. La compilation, les contrôles automatiques et la vérification visuelle des pages restent requis avant publication.
 
-Un essai antérieur de génération de CV génériques n’avait pas passé la compilation MiKTeX. Aucun PDF issu de cet essai n’est livré ; ses brouillons restent hors du portfolio. Aucun CV n’a été régénéré pour cette mise à jour.
+L’ancienne URL `CV_Victor_Woelffel_FR.pdf`, retirée précédemment, n’est pas réutilisée : ces versions complètes ont leurs propres noms de fichiers.
 
 ## Liens externes
 

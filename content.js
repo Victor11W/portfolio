@@ -6,6 +6,7 @@ export const profile = {
   linkedin: 'https://www.linkedin.com/in/victor-woelffel-a84b60292/',
   github: 'https://github.com/Victor11W',
   doi: 'https://doi.org/10.1109/ICCRAIDS67816.2026.11519663',
+  resume: {fr:'CV_Victor_Woelffel_Complet_FR.pdf',en:'CV_Victor_Woelffel_Complet_EN.pdf'},
   updated: '2026-11-04'
 };
 export const ui = {
@@ -69,7 +70,7 @@ export const ui = {
     languages:'Français natif · C2 / Anglais · B2.2',
     contactLabel:"Contact", contactTitle:"Échanger sur", contactAccent:"un projet.",
     contactIntro:'Un projet, une question technique ou l’envie d’échanger autour de l’IA et des systèmes embarqués ? Écris-moi.',
-    emailCTA:"M’écrire", copy:'Copier l’adresse e-mail', copied:'Adresse copiée', copyFail:'Copie manuelle :', download:'Mon CV en anglais · PDF',
+    emailCTA:"M’écrire", copy:'Copier l’adresse e-mail', copied:'Adresse copiée', copyFail:'Copie manuelle :', download:'Mon CV complet · PDF',
     contactNote:'Pour échanger autour des projets et de leur conception.',
     footer:"Portfolio personnel · IA et systèmes embarqués", backTop:'Retour en haut', privacy:'Sans cookies de suivi ni statistiques externes.',
     photoNote:'IA · systèmes embarqués · robotique', illustrationNote:'Schéma de principe', cvUnavailable:'Le CV sera bientôt disponible'
@@ -134,7 +135,7 @@ export const ui = {
     languages:'Native French · C2 / English · B2.2',
     contactLabel:"Contact", contactTitle:"Discuss", contactAccent:"a project.",
     contactIntro:'A project, a technical question, or an idea about AI and embedded systems? Let’s talk.',
-    emailCTA:"Email me", copy:'Copy email address', copied:'Email address copied', copyFail:'Copy manually:', download:'My résumé · PDF',
+    emailCTA:"Email me", copy:'Copy email address', copied:'Email address copied', copyFail:'Copy manually:', download:'My full résumé · PDF',
     contactNote:'For conversations about projects and how they are built.',
     footer:"Personal portfolio · AI and embedded systems", backTop:'Back to top', privacy:'No tracking cookies or external analytics.',
     photoNote:'AI · embedded systems · robotics', illustrationNote:'Concept diagram', cvUnavailable:'The résumé will be available soon'
@@ -143,7 +144,7 @@ export const ui = {
 const p = (fr,en) => ({fr,en});
 export const projects = [
  {
-  id:'b-reality',visual:'wave',color:'#d5f5a0',category:['ai','embedded'],tech:['EEG','c-VEP','eCCA','Neural networks','Real-time'],
+  id:'b-reality',visual:'wave',color:'#d5f5a0',category:['ai','embedded'],tech:['EEG','c-VEP','eCCA','Neural networks','Real-time','Git'],
   title:p('B-Reality','B-Reality'),kind:p('Recherche · Capgemini Engineering · 2025–2026','Research · Capgemini Engineering · 2025–2026'),
   short:p('Classifier des signaux cérébraux en temps réel pour une interface de rééducation en réalité virtuelle.','Real-time brain signal classification for a virtual-reality rehabilitation interface.'),
   context:p('Une interface cerveau-ordinateur c-VEP intégrée à un système de rééducation en VR. Le défi : concilier qualité de classification, robustesse et faible latence.','A c-VEP brain-computer interface integrated into a VR rehabilitation system. The challenge: balancing classification accuracy, robustness and low latency.'),
@@ -153,7 +154,7 @@ export const projects = [
   links:[{label:'paper',url:profile.doi}]
  },
  {
-  id:'processor',visual:'cpu',color:'#e6b8ff',category:['embedded'],tech:['RISC-V','Assembly','16-bit ISA','Pipeline','Python','C','GNU toolchain'],
+  id:'processor',visual:'cpu',color:'#e6b8ff',category:['embedded'],tech:['RISC-V','Assembly','16-bit ISA','Pipeline','Python','C','GNU toolchain','Git'],
   title:p('Au cœur du processeur','Inside the processor'),kind:p('Projet académique · équipe · déc. 2024','Academic team project · Dec. 2024'),
   short:p('Désassembler un programme RISC-V, puis réécrire son addition de tableaux avec nos propres instructions de 16 bits.','We disassembled a RISC-V program, then expressed the same array addition in our own 16-bit instruction set.'),
   context:p('Un projet académique réalisé en équipe pour relier le code, les instructions machine et l’architecture matérielle. Le rapport comporte une étude RISC-V et la conception d’un jeu d’instructions personnalisé.','An academic team project connecting code, machine instructions and hardware architecture. The report covers a RISC-V study and the design of a custom instruction set.'),
@@ -163,7 +164,7 @@ export const projects = [
   links:[{label:'report',url:'./assets/Rapport_RISCV_Architecture_Processeur.pdf',download:'Rapport_RISCV_Architecture_Processeur.pdf'}]
  },
  {
-  id:'stm32-c',visual:'board',color:'#f8c2a6',category:['embedded'],tech:['STM32','C','GPIO','UART','Interrupts','Bare-metal'],
+  id:'stm32-c',visual:'board',color:'#f8c2a6',category:['embedded'],tech:['STM32','C','GPIO','UART','Interrupts','Bare-metal','Git'],
   title:p('STM32, depuis zéro','STM32, from scratch'),kind:p('Projet académique · C embarqué','Academic project · embedded C'),
   short:p('Initialiser une carte vierge, configurer ses périphériques et faire dialoguer logiciel et matériel.','Bringing up a board, configuring peripherals and connecting software to hardware.'),
   context:p('Prendre en main une carte STM32 initialement non configurée, du mappage mémoire à la commande des périphériques.','Working with an initially unconfigured STM32 board, from memory mapping to peripheral control.'),
@@ -173,14 +174,15 @@ export const projects = [
   links:[{label:'course',url:'https://4se03.telecom-paris.fr/tp/'}]
  },
  {
-  id:'q-learning',visual:'grid',color:'#d8ccff',category:['ai'],tech:['Python','PyTorch','PettingZoo','Q-learning','Gym'],
-  title:p('Apprendre à décider','Learning to decide'),kind:p('Projet académique · PROJ104 · équipe','Academic team project · PROJ104'),
-  short:p('Un agent de Q-learning pour Chartichaud, un jeu de stratégie opposant deux royaumes.','A Q-learning agent for Chartichaud, a strategy game between two kingdoms.'),
-  context:p('Dans le projet PROJ104 à Télécom Paris, concevoir en équipe une IA pour un jeu avec gestion de ressources, adversaire et brouillard de guerre.','A team project in Télécom Paris’s PROJ104 course: building an AI for a game involving resource management, an opponent and fog of war.'),
-  steps:p(['Familiarisation avec les outils d’apprentissage par renforcement et première expérimentation sur Pong.','Création de l’environnement du jeu avec PettingZoo pour faire s’affronter deux agents.','Développement d’un agent de Q-learning en Python avec PyTorch, en travaillant sur les états, les actions et les récompenses.'],['Explored reinforcement-learning tools and ran an initial experiment on Pong.','Created the game environment using PettingZoo to support matches between two agents.','Developed a Q-learning agent in Python with PyTorch, working on states, actions and rewards.']),
-  learn:p('Modéliser un environnement multi-agent et traduire les règles d’un jeu en problème d’apprentissage. Examiner les récompenses et le comportement appris.','Modelling a multi-agent environment and translating game rules into a learning problem. Examining rewards and learned behaviour.'),
-  note:p('Projet d’équipe. Le poster présente un état d’avancement ; la courbe de récompenses illustrée concerne l’expérimentation sur Pong.','Team project. The poster presents a progress update; its reward curve comes from the Pong experiment.'),
-  links:[{label:'poster',url:'./assets/Poster_Q_Learning_Chartichaud.pdf',download:'Poster_Q_Learning_Chartichaud.pdf'}]
+  id:'emerton-optimization',visual:'optimization',color:'#e7dab1',category:['ai','software'],tech:['Gurobi','Mathematical optimisation','Constraints','Performance','Git'],disclosure:'contribution-only',
+  title:p('Simplifier pour accélérer','Simplify to accelerate'),kind:p('Emerton Data · contribution en stage · 2026','Emerton Data · internship contribution · 2026'),
+  short:p('Simplifier la formulation et les contraintes d’un système complexe pour réduire son temps de calcul.','Simplifying the formulation and constraints of a complex system to reduce computation time.'),
+  context:p('Chez Emerton Data, j’ai contribué à accélérer un système d’optimisation existant. Ma partie portait sur sa simplification.','At Emerton Data, I contributed to accelerating an existing optimisation system. My work focused on simplifying it.'),
+  steps:p(['Analyse d’un modèle d’optimisation existant et de ses contraintes.','Simplification de la formulation et adaptation des contraintes pour alléger la résolution.','Optimisations ayant permis de réduire le temps de calcul de 30 %.'],['Examined an existing optimisation model and its constraints.','Simplified the formulation and adapted constraints to reduce the work required for solving.','Implemented optimisations that reduced computation time by 30%.']),
+  learn:p('Relier la formulation d’un problème, ses contraintes et le coût de sa résolution.','Connecting a problem’s formulation, its constraints and the computational cost of solving it.'),
+  outcome:{value:'−30 %',label:p('Temps de calcul','Computation time'),caption:p('Réduction obtenue grâce aux simplifications et optimisations réalisées.','Reduction achieved through the simplifications and optimisations I implemented.'),source:'user-confirmed'},
+  note:p('Présentation limitée à ma contribution personnelle. Le contexte, le fonctionnement du projet et les documents internes restent confidentiels.','This description covers only my personal contribution. The project’s context, functionality and internal documents remain confidential.'),
+  links:[]
  },
  {
   id:'optiframe',visual:'glasses',color:'#b9daff',category:['ai','software'], tech:['React','TypeScript','ONNX','WebAssembly','Computer vision'],
@@ -203,18 +205,17 @@ export const projects = [
   links:[{label:'sourceZip',url:'./assets/Code_Reconnaissance_Chiffres.zip',download:'Code_Reconnaissance_Chiffres.zip'}]
  },
  {
-  id:'emerton-optimization',visual:'optimization',color:'#e7dab1',category:['ai','software'],tech:['Gurobi','Mathematical optimisation','Constraints','Performance'],disclosure:'contribution-only',
-  title:p('Simplifier pour accélérer','Simplify to accelerate'),kind:p('Emerton Data · contribution en stage · 2026','Emerton Data · internship contribution · 2026'),
-  short:p('Simplifier la formulation et les contraintes d’un système complexe pour réduire son temps de calcul.','Simplifying the formulation and constraints of a complex system to reduce computation time.'),
-  context:p('Chez Emerton Data, j’ai contribué à accélérer un système d’optimisation existant. Ma partie portait sur sa simplification.','At Emerton Data, I contributed to accelerating an existing optimisation system. My work focused on simplifying it.'),
-  steps:p(['Analyse d’un modèle d’optimisation existant et de ses contraintes.','Simplification de la formulation et adaptation des contraintes pour alléger la résolution.','Optimisations ayant permis de réduire le temps de calcul de 30 %.'],['Examined an existing optimisation model and its constraints.','Simplified the formulation and adapted constraints to reduce the work required for solving.','Implemented optimisations that reduced computation time by 30%.']),
-  learn:p('Relier la formulation d’un problème, ses contraintes et le coût de sa résolution.','Connecting a problem’s formulation, its constraints and the computational cost of solving it.'),
-  outcome:{value:'−30 %',label:p('Temps de calcul','Computation time'),caption:p('Réduction obtenue grâce aux simplifications et optimisations réalisées.','Reduction achieved through the simplifications and optimisations I implemented.'),source:'user-confirmed'},
-  note:p('Présentation limitée à ma contribution personnelle. Le contexte, le fonctionnement du projet et les documents internes restent confidentiels.','This description covers only my personal contribution. The project’s context, functionality and internal documents remain confidential.'),
-  links:[]
+  id:'q-learning',visual:'grid',color:'#d8ccff',category:['ai'],tech:['Python','PyTorch','PettingZoo','Q-learning','Gym'],
+  title:p('Apprendre à décider','Learning to decide'),kind:p('Projet académique · PROJ104 · équipe','Academic team project · PROJ104'),
+  short:p('Un agent de Q-learning pour Chartichaud, un jeu de stratégie opposant deux royaumes.','A Q-learning agent for Chartichaud, a strategy game between two kingdoms.'),
+  context:p('Dans le projet PROJ104 à Télécom Paris, concevoir en équipe une IA pour un jeu avec gestion de ressources, adversaire et brouillard de guerre.','A team project in Télécom Paris’s PROJ104 course: building an AI for a game involving resource management, an opponent and fog of war.'),
+  steps:p(['Familiarisation avec les outils d’apprentissage par renforcement et première expérimentation sur Pong.','Création de l’environnement du jeu avec PettingZoo pour faire s’affronter deux agents.','Développement d’un agent de Q-learning en Python avec PyTorch, en travaillant sur les états, les actions et les récompenses.'],['Explored reinforcement-learning tools and ran an initial experiment on Pong.','Created the game environment using PettingZoo to support matches between two agents.','Developed a Q-learning agent in Python with PyTorch, working on states, actions and rewards.']),
+  learn:p('Modéliser un environnement multi-agent et traduire les règles d’un jeu en problème d’apprentissage. Examiner les récompenses et le comportement appris.','Modelling a multi-agent environment and translating game rules into a learning problem. Examining rewards and learned behaviour.'),
+  note:p('Projet d’équipe. Le poster présente un état d’avancement ; la courbe de récompenses illustrée concerne l’expérimentation sur Pong.','Team project. The poster presents a progress update; its reward curve comes from the Pong experiment.'),
+  links:[{label:'poster',url:'./assets/Poster_Q_Learning_Chartichaud.pdf',download:'Poster_Q_Learning_Chartichaud.pdf'}]
  },
  {
-  id:'fpga',visual:'fpga',color:'#f2d79e',category:['embedded'],tech:['FPGA','SystemVerilog','Avalon','RTL'],
+  id:'fpga',visual:'fpga',color:'#f2d79e',category:['embedded'],tech:['FPGA','SystemVerilog','Avalon','RTL','Git'],
   title:p('Une mémoire, une interface','Memory meets interface'),kind:p('Projet académique · conception numérique','Academic project · digital design'),
   short:p('Concevoir un contrôleur mémoire compatible Avalon, puis vérifier son fonctionnement sur FPGA.','Designing an Avalon-compatible memory controller, then verifying it on an FPGA.'),
   context:p('Concevoir un module matériel personnalisé respectant un protocole d’interface et le confronter à une implémentation physique.','Designing a custom hardware module that follows an interface protocol and testing a physical implementation.'),
@@ -224,7 +225,7 @@ export const projects = [
   links:[{label:'course',url:'https://hdl.telecom-paris.fr/4se04/ctrl_video_chap0/#1-premiere-modification-du-code-de-top'}]
  },
  {
-  id:'stm32-rust',visual:'rust',color:'#e4b8a9',category:['embedded'],tech:['STM32','Rust','Interrupts','Peripherals'],
+  id:'stm32-rust',visual:'rust',color:'#e4b8a9',category:['embedded'],tech:['STM32','Rust','Interrupts','Peripherals','Git'],
   title:p('L’embarqué, côté Rust','Embedded systems, in Rust'),kind:p('Projet académique · Rust embarqué','Academic project · embedded Rust'),
   short:p('Explorer une autre façon de piloter un microcontrôleur, ses interruptions et ses périphériques.','Exploring another way to control a microcontroller, its interrupts and its peripherals.'),
   context:p('Implémenter des fonctionnalités embarquées sur STM32 avec Rust et faire le lien avec les mécanismes matériels.','Implementing embedded functionality on STM32 with Rust and connecting it to the hardware mechanisms.'),
@@ -234,7 +235,7 @@ export const projects = [
   links:[]
  },
  {
-  id:'robot-simulator',visual:'robot',color:'#b9cffa',category:['software'],tech:['Java','HTTP','Sockets','Client-server','Middleware'],
+  id:'robot-simulator',visual:'robot',color:'#b9cffa',category:['software'],tech:['Java','HTTP','Sockets','Client-server','Middleware','Git'],
   title:p('Des robots en réseau','Robots, connected'),kind:p('Projet académique · systèmes distribués','Academic project · distributed systems'),
   short:p('Un simulateur de robot construit autour d’une architecture client-serveur et de communications réseau.','A robot simulator built on a client-server architecture and network communication.'),
   context:p('Relier une simulation de robot à des composants logiciels communicants, avec plusieurs modes d’échange.','Connecting a robot simulation to communicating software components, using several exchange mechanisms.'),
@@ -264,7 +265,7 @@ export const projects = [
   links:[]
  },
  {
-  id:'alarm',visual:'clock',color:'#d5d4c3',category:['embedded'],tech:['Embedded systems','Verification','Agile'],
+  id:'alarm',visual:'clock',color:'#d5d4c3',category:['embedded'],tech:['Embedded systems','Verification','Agile','Git'],
   title:p('Un réveil, tout un système','An alarm, a whole system'),kind:p('Projet académique · système embarqué','Academic project · embedded system'),
   short:p('Développer et vérifier un réveil programmable, au fil d’un projet mené de façon itérative.','Developing and verifying a programmable alarm clock through an iterative project.'),
   context:p('Un objet du quotidien comme support de conception, de développement et de vérification d’un système embarqué.','An everyday object as a vehicle for designing, developing and verifying an embedded system.'),

@@ -38,7 +38,7 @@ Sous Windows, **Ouvrir_Portfolio.cmd** construit le site puis ouvre la version l
 - Français et anglais, thème sombre et thème clair.
 - Navigation intégrée au début de la page. Sur mobile, l’ouverture du menu décale le contenu vers le bas. Les animations peuvent être mises en pause et respectent la préférence de réduction des mouvements.
 - Illustrations SVG originales et deux scènes 3D : processeur avec pipeline et bras robotisé qui empile trois cubes, plus un réseau neuronal en 2D.
-- CV anglais existant et validé, accessible depuis les deux langues du site.
+- CV complet en français ou en anglais selon la langue du site, avec tous les projets et une pagination adaptée.
 - Rapport d’architecture RISC-V et poster Q-learning téléchargeables depuis leurs fiches.
 - Atelier de reconnaissance de chiffres : dessin, entrée 28 × 28, activations et trois scores du CNN sauvegardé.
 - Processeur pas à pas, interruption STM32 et transfert d’un pixel Avalon / FIFO dans les fiches concernées.

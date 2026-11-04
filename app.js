@@ -69,8 +69,9 @@ function setText() {
  $('.filter-group').setAttribute('aria-label',language==='fr'?'Filtrer les projets':'Filter projects');
  $('.scene-controls').setAttribute('aria-label',language==='fr'?'Choisir une visualisation':'Choose a visualisation');
  $('.summary-strip').setAttribute('aria-label',language==='fr'?'Quelques repères':'A few highlights');
- $('#cv-download').href='./assets/CV_Victor_Woelffel_EN.pdf';
- $('#cv-download').download='CV_Victor_Woelffel_EN.pdf';
+ const resumeFile=profile.resume[language];
+ $('#cv-download').href='./assets/'+resumeFile;
+ $('#cv-download').download=resumeFile;
  updateMotionButton();updateSceneText();
 }
 
@@ -109,7 +110,7 @@ function renderProjects() {
 
 function renderJourney() {
  const t=txt();
- $('#experience-list').innerHTML=[{n:1,company:'Emerton Data',tech:['Copilot Studio','LangChain','Gurobi','Docker']},{n:2,company:'Capgemini Engineering',tech:['EEG','eCCA','Neural networks','Real-time']}].map(({n,company,tech})=>{
+ $('#experience-list').innerHTML=[{n:1,company:'Emerton Data',tech:['Copilot Studio','LangChain','Gurobi','Docker','Git']},{n:2,company:'Capgemini Engineering',tech:['EEG','eCCA','Neural networks','Real-time','Git']}].map(({n,company,tech})=>{
   const stem='exp'+n;
   return '<article class="experience"><div class="experience-aside"><p class="mono">'+esc(t[stem+'Date'])+'</p><h3>'+company+'</h3><p class="experience-location">'+esc(t[stem+'Place'])+'</p></div><div class="experience-body"><h4>'+esc(t[stem+'Role'])+'</h4><p class="experience-intro">'+esc(t[stem+'Intro'])+'</p><ul>'+t[stem+'Bullets'].map(b=>'<li>'+esc(b)+'</li>').join('')+'</ul>'+tags(tech)+(n===2?'<div class="experience-results"><div><strong>≈ 95 %</strong><small>'+esc(t.accuracy)+'</small></div><div><strong>&lt; 10 ms</strong><small>'+esc(t.latency)+'</small></div></div><a class="text-button" href="#project/b-reality" data-project="b-reality">'+esc(t.viewStudy)+arrow+'</a>':outcomeBlock(projects.find(p=>p.id==='emerton-optimization'),true)+'<a class="text-button" href="#project/emerton-optimization" data-project="emerton-optimization">'+esc(t.viewOptimization)+arrow+'</a>')+'</div></article>';
  }).join('');

@@ -4,13 +4,14 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import {gzipSync} from 'node:zlib';
 import {fileURLToPath} from 'node:url';
-import {projects} from '../content.js';
+import {projects,profile} from '../content.js';
 import {projectNotes} from '../project-notes.js';
 
 const dist=fileURLToPath(new URL('../dist/',import.meta.url));
 const html=await fs.readFile(path.join(dist,'index.html'),'utf8');
 const refs=[...html.matchAll(/\b(?:src|href)="(\.\/[^"]+)"/g)].map(m=>m[1]);
 const resources=new Set([...refs,'./details.bundle.js','./project-details.css','./assets/digit-model.js','./assets/processor-report-diagram.png']);
+for(const filename of Object.values(profile.resume))resources.add('./assets/'+filename);
 for(const p of projects)for(const link of p.links)if(link.url.startsWith('./'))resources.add(link.url);
 for(const translations of Object.values(projectNotes))for(const n of Object.values(translations)){
  for(const url of [n.exhibit.href,n.exhibit.image])if(url?.startsWith('./'))resources.add(url);
