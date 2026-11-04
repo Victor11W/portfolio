@@ -1,6 +1,6 @@
 # Comparaison de la proposition — 4 novembre 2026
 
-Version de référence : `76c1d99` sur `codex/public-portfolio`. La proposition reste sur sa branche ; GitHub fabrique l’archive de prévisualisation sans déployer le site.
+Cette revue compare les évolutions à la référence `76c1d99` sur `codex/public-portfolio`. La version validée `bb85872`, conservée sur `codex/portfolio-review`, a ensuite été publiée manuellement sur VM01, à l’adresse https://victor.woelffel.com/. GitHub Actions vérifie et construit le site, sans le déployer.
 
 ## Parcours de lecture
 
@@ -26,8 +26,19 @@ Sur cette révision, les essais en HTTP local ont couvert les vues ordinateur et
 
 ## Ajustements après la revue de Victor
 
-Le bandeau dans le flux est conservé. Les fiches neurones et Q-learning retrouvent leur contenu et leur présentation précédents. Le portrait a été retiré des sources et du build de cette branche.
+Le bandeau dans le flux est conservé. Les fiches neurones et Q-learning retrouvent leur contenu et leur présentation précédents. Le portrait a été retiré des sources, du build et de l’hébergement public sur VM01.
 
 La fiche CPU utilise la figure 2 originale et le listing 16 bits du rapport. Elle permet de partir de 0x20 (15 cycles) ou de l’entrée en 0x00 (94 cycles). Les entrées mémoire sont un jeu d’essai. La lecture s’arrête au branchement de 0x3A et affiche sa destination calculée en 0x2E. Les conventions d’interprétation sont décrites dans [PROCESSOR_DEMO.md](PROCESSOR_DEMO.md).
 
 Les 34 tests passent. Les essais locaux ont vérifié les deux parcours, l’écriture de 12 en mémoire, les zooms du schéma, le clavier, les deux langues, la disposition mobile et la prédiction du chiffre 7 dans l’atelier restauré. Le poster de Chartichaud reste accessible dans sa fiche.
+
+## Publication validée sur VM01
+
+La révision `bb85872753eeea30907c713b0e235e88de8493a1` de `codex/portfolio-review` a été publiée le 4 novembre 2026 sur https://victor.woelffel.com/ via `victor@victor.woelffel.com`.
+
+- Version active : `/var/www/victor.woelffel.com/releases/bb85872753eeea30907c713b0e235e88de8493a1-20261104T225003Z`.
+- Version précédente, conservée pour le retour arrière : `/var/www/victor.woelffel.com/releases/76c1d99b77a3c009eebf8d915d4fbdba9f707296-20261104T174517Z`.
+- Les sommes SHA-256 des 17 fichiers transférés concordent avec le build préparé. Les 16 ressources publiques ont été vérifiées en HTTPS.
+- Les anciennes URL du portrait et du CV français répondent 404 ou 410. La redirection HTTP vers HTTPS répond 301.
+
+Le runbook opérationnel reste hors de ce dépôt public, dans `operations/portfolio/runbook-vm01.md` du workspace CVs. Les anciens lanceurs ciblant Télécom Paris ne doivent pas être utilisés pour ce domaine.
