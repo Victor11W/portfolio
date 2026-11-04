@@ -1,0 +1,11 @@
+dist/
+outputs/
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
+*.zip
+!assets/Code_Reconnaissance_Chiffres.zip
