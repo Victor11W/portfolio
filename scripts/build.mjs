@@ -6,7 +6,7 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const output=path.join(root,'dist');
 // An explicit dependency order keeps this small build transparent and dependency-free.
 const initial=['content.js','project-utils.js','visuals.js','scene-models.js','digit-engine.js','digit-samples.js','digit-loader.js','neural-scene.js','solid-renderer.js','processor-engine.js','scene.js','app.js'];
-const details=['project-notes.js','digit-lab.js','report-cpu.js','processor-lab.js','hardware-engines.js','hardware-labs.js','project-details.js'];
+const details=['project-notes.js','digit-lab.js','report-cpu.js','processor-diagram.js','processor-lab.js','hardware-engines.js','hardware-labs.js','project-details.js'];
 // File:// cannot import ES modules in all browsers. Build two classic scripts;
 // each module keeps its private scope, and the second reuses the first's engines.
 async function pack(names) {

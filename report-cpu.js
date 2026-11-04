@@ -87,12 +87,15 @@ function entryState() {
   return {
     cycle: 0, registers, memory, stages: {fetch: null, decode: null, execute: null},
     nextFetch: 0, decodedOperands: null, effect: null, forwarding: null, branch: null,
-    done: false, stopReason: null
+    done: false, stopReason: null,
+    scenario: 'report', stall: null, flush: null, memoryWaitUsed: false, pendingStop: null
   };
 }
 
-export function createReportCPUState(start = 'body') {
+export function createReportCPUState(start = 'body', {hazards = false} = {}) {
+  if (typeof hazards !== 'boolean') throw new TypeError('Expected a boolean hazards option');
   const state = entryState();
+  state.scenario = hazards ? 'hazards' : 'report';
   if (start === 'entry') return state;
   if (start !== 'body') throw new RangeError('Unknown report entry point');
   // Architectural values immediately before 0x20, after the input checks
@@ -138,26 +141,59 @@ function resolveControl(instruction, registers) {
 
 export function advanceReportCPU(state) {
   if (state.done) return state;
+  // The report mentions structural stalls as a possible extension, not an
+  // implemented timing behaviour. This optional scenario makes the data
+  // memory unavailable for one cycle before the second LOAD enters EX.
+  // Holding PC and IF/ID prevents either waiting instruction from advancing;
+  // the old EX instruction has already completed, so EX receives a bubble.
+  if (state.scenario === 'hazards' && !state.memoryWaitUsed && state.stages.decode?.address === 0x2a) {
+    const instruction = state.stages.decode;
+    return {
+      ...state, cycle: state.cycle + 1,
+      registers: state.registers.slice(), memory: {...state.memory},
+      stages: {...state.stages, execute: null},
+      effect: null, forwarding: null, branch: null, flush: null,
+      stall: {
+        reason: 'memory-not-ready', instruction,
+        address: state.decodedOperands.a + instruction.imm,
+        held: ['pc', 'if-id'], bubble: 'execute'
+      },
+      memoryWaitUsed: true
+    };
+  }
   const registers = state.registers.slice();
   const memory = {...state.memory};
   const execute = state.stages.decode;
   const effect = executeReportInstruction(execute, state.decodedOperands, registers, memory);
   const decode = state.stages.fetch;
   // EX results are visible to ID in the same cycle through the bypass.
-  const decodedOperands = decode ? {a: registers[decode.rs1] ?? 0, b: registers[decode.rs2] ?? 0} : null;
+  const firstSource = decode && ['BNEZ', 'JUMP'].includes(decode.op) ? decode.rd : decode?.rs1;
+  const decodedOperands = decode ? {a: registers[firstSource] ?? 0, b: registers[decode.rs2] ?? 0} : null;
   const forwarding = effect?.kind === 'register' && decode?.sources.includes(effect.register)
     ? {register: effect.register, value: effect.value} : null;
   const control = resolveControl(decode, registers);
-  const fetchAddress = control?.taken ? control.target : state.nextFetch;
-  const fetch = REPORT_LISTING[fetchAddress / 2] ?? null;
+  // Unlike the report's immediate ID -> IF redirect, the optional scenario
+  // has already read the sequential instruction. Invalidate that read and
+  // fetch the target only on the following cycle; it never reaches decode.
+  const anticipated = REPORT_LISTING[state.nextFetch / 2] ?? null;
+  const flush = state.scenario === 'hazards' && control?.taken && control.target !== state.nextFetch && anticipated
+    ? {reason: 'taken-branch', instruction: anticipated, target: control.target} : null;
+  const fetchAddress = control?.taken && !flush ? control.target : state.nextFetch;
+  const fetch = flush ? null : REPORT_LISTING[fetchAddress / 2] ?? null;
   registers[pc] = fetchAddress;
-  let stopReason = null;
-  if (decode?.address === 0x3a) stopReason = 'loop-branch';
+  let stopReason = state.pendingStop;
+  let pendingStop = null;
+  if (decode?.address === 0x3a) {
+    if (flush) pendingStop = 'loop-branch';
+    else stopReason = 'loop-branch';
+  }
   else if (decode?.word === null) stopReason = 'unencoded-jump';
-  else if (!fetch) stopReason = 'outside-listing';
+  else if (!fetch && !flush) stopReason = 'outside-listing';
   return {
     cycle: state.cycle + 1, registers, memory, stages: {fetch, decode, execute},
-    nextFetch: fetchAddress + 2, decodedOperands, forwarding, effect, branch: control,
-    done: stopReason !== null, stopReason
+    nextFetch: flush ? control.target : fetchAddress + 2,
+    decodedOperands, forwarding, effect, branch: control,
+    done: stopReason !== null, stopReason,
+    scenario: state.scenario, stall: null, flush, memoryWaitUsed: state.memoryWaitUsed, pendingStop
   };
 }
