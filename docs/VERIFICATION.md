@@ -70,4 +70,11 @@ La version source en modules ES et le bundle construit ont été ouverts sur HTT
 - Les schémas sont pédagogiques, sans exécution de firmware, HDL ou matériel connecté. Aucune précision historique du CNN ni performance physique de circuit n’est déduite de ces démonstrations.
 - Aucun audit d’accessibilité ou de performance exhaustif n’est revendiqué.
 - Les TP officiels fournis ont été lus ; les autres liens externes documentés n’ont pas tous été vérifiés.
-- L’hébergement Télécom Paris existant est utilisé. Aucun dépôt GitHub distant n’a été créé. Le workflow CI est préparé et n’a pas été exécuté sur GitHub.
+- L’hébergement Télécom Paris existant est utilisé. La publication GitHub des sources est séparée de la publication SSH du site ; ses vérifications automatiques sont consultables dans les Actions du dépôt.
+
+## Sources publiques sur GitHub
+
+- Destination : https://github.com/Victor11W/portfolio, branche codex/public-portfolio.
+- Les 62 fichiers suivis ont été audités : aucun contexte du projet confidentiel ni motif d’identifiant secret détecté dans les sources textuelles. Les trois PDF publics ont été vérifiés par extraction de texte. L’archive de code contient uniquement le classifieur de chiffres, ses notes et les poids CNN MNIST, sans images de visages.
+- Un historique public distinct commence avec les fichiers actuels autorisés. L’ancien historique, les sorties locales et les documents retirés restent hors de la branche publique.
+- Le workflow utilise les versions v7 officielles de actions/checkout et actions/setup-node, vérifiées dans leurs publications officielles. Les résultats distants restent à consulter dans GitHub Actions ; les contrôles locaux sont décrits plus haut.

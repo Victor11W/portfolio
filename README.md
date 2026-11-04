@@ -91,18 +91,23 @@ Les résultats correspondent aux scores du modèle sur le dessin, pas à une mes
 
 ## Git et GitHub
 
-Ce dossier est un dépôt Git autonome, distinct du dépôt privé des CV et candidatures. La branche initiale est `codex/portfolio`. Les sorties de build, les captures de vérification, les secrets et les fichiers temporaires sont ignorés.
+Les sources du portfolio sont disponibles dans [Victor11W/portfolio](https://github.com/Victor11W/portfolio). Le site est hébergé sur [Télécom Paris](https://perso.telecom-paristech.fr/vwoelffel-23/).
+
+La branche publique est `codex/public-portfolio`. Son historique commence avec un instantané des sources vérifiées, après retrait des documents confidentiels. L’ancien historique de travail est conservé uniquement en local sur `codex/portfolio` ; ne pas publier cette branche historique.
+
+Ce dépôt est distinct du dépôt privé des CV et candidatures. Les sorties de build, les captures de vérification, les secrets et les fichiers temporaires sont ignorés.
 
 Si Git signale une différence de propriétaire sur ce dossier Windows, utiliser `npm run git -- status` (ou toute autre commande Git après `--`). Cette commande fait confiance uniquement à ce dépôt, pour cette invocation, sans modifier les réglages Git globaux.
 
-Aucun dépôt Git distant n’a été créé. Le site est publié sur l’hébergement existant de Télécom Paris, décrit ci-dessous. Après création du dépôt GitHub souhaité, ajouter son URL réelle :
+Après avoir enregistré des modifications sur la branche publique :
 
 ```sh
-git remote add origin <URL_DU_DEPOT_GITHUB>
-git push -u origin codex/portfolio
+git push origin codex/public-portfolio
 ```
 
-Le workflow GitHub Actions vérifie les sources, lance les tests et construit le site. Il ne publie rien.
+Envoyer uniquement cette branche. Les options `--all` et `--mirror` ne doivent pas être utilisées : elles incluraient l’historique local qui n’est pas destiné à la publication.
+
+Le workflow GitHub Actions vérifie les sources, lance les tests et construit le site. Il ne publie rien sur l’hébergement SSH.
 
 ## Publier et mettre à jour
 

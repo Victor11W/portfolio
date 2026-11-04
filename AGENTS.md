@@ -11,3 +11,9 @@ This repository is the standalone public-facing portfolio source for Victor Woel
 - Keep private application databases, inbox exports, offers and credentials outside this repository.
 - The bundled PDF files are copies of existing validated CVs. Do not describe them as newly generated generic CVs. Regenerating CVs requires the original personal database, LaTeX template and validation workflow.
 - Respect the user's requested publication scope. This delivery is local only; do not infer a request to publish from routine design or content edits.
+
+## Public Git history
+
+- The public branch is codex/public-portfolio. Its first commit contains an audited snapshot of authorised files.
+- codex/portfolio keeps earlier local work history that includes withdrawn material. Never push that historical branch, --all, or --mirror. Push only the public branch and its future descendants.
+- The public source repository is https://github.com/Victor11W/portfolio. The live website continues to use the existing authorised SSH hosting.
