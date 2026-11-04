@@ -4,28 +4,33 @@ import {drawDigitExample} from './digit-samples.js';
 
 // A reduced 2D view of the real CNN: sampled channels and actual activations.
 export function createNeuralScene(ctx,onReady) {
- let results=null,pending=false,failed=false,lastAnnouncement='';
+ let model=null,pending=false,failed=false,lastAnnouncement='';
+ const digits=[7,2,0],results=new Map();
  const channels1=[0,5,11,17,23,31],channels2=[0,12,25,38,50,63],units=[0,18,36,54,72,90,108,127];
  const meanAbs=(values,start,length)=>{let sum=0;for(let i=start;i<start+length;i++)sum+=Math.abs(values[i]);return sum/length;};
  function bitmap(pixels){const canvas=document.createElement('canvas');canvas.width=28;canvas.height=28;const c=canvas.getContext('2d'),image=c.createImageData(28,28);pixels.forEach((v,i)=>{image.data[i*4]=image.data[i*4+1]=image.data[i*4+2]=v;image.data[i*4+3]=255;});c.putImageData(image,0,0);return canvas;}
  async function activate(){
-  if(results||pending)return;pending=true;failed=false;
+  if(model||pending)return;pending=true;failed=false;
   try{
-   const model=await loadDigitModel();
-   results=[7,2,0].map(digit=>{
+   model=await loadDigitModel();
+  }catch{failed=true;}finally{pending=false;onReady();}
+ }
+ // Infer only the example actually displayed. Switching away does no CNN work.
+ function resultFor(digit){
+   if(!results.has(digit)){
     const sketch=document.createElement('canvas');sketch.width=sketch.height=280;const c=sketch.getContext('2d');c.fillStyle='#000';c.fillRect(0,0,280,280);drawDigitExample(c,digit);
     const {pixels}=prepareDigitPixels(c.getImageData(0,0,280,280).data,280,280),result=predictDigit(pixels,model);
     const values=[[1],channels1.map(channel=>meanAbs(result.features,channel*169,169)),channels2.map(channel=>meanAbs(result.features2,channel*25,25)),units.map(unit=>result.hidden[unit]),result.scores];
     const links=[channels1.map(channel=>meanAbs(model['conv1.weight'],channel*9,9)),channels1.flatMap(ic=>channels2.map(oc=>meanAbs(model['conv2.weight'],(oc*32+ic)*9,9))),channels2.flatMap(ic=>units.map(oc=>meanAbs(model['fc1.weight'],oc*1600+ic*25,25))),units.flatMap(ic=>result.scores.map((_,oc)=>Math.abs(model['fc2.weight'][oc*128+ic])))];
-    return {digit,prediction:result.scores.indexOf(Math.max(...result.scores)),values,links,image:bitmap(pixels)};
-   });
-  }catch{failed=true;}finally{pending=false;onReady();}
+    results.set(digit,{digit,prediction:result.scores.indexOf(Math.max(...result.scores)),values,links,image:bitmap(pixels)});
+   }
+   return results.get(digit);
  }
  function paint(width,height,time,light,language){
   const ink=light?'#41651c':'#d5f590',muted=light?'#59674d':'#a5b79a',line=light?'66,103,28':'192,225,145';
   const label=(value,x,y,size=9,align='center',color=muted)=>{ctx.font='400 '+size+'px Consolas, monospace';ctx.textAlign=align;ctx.textBaseline='middle';ctx.fillStyle=color;ctx.fillText(value,x,y);};
-  if(!results){label(failed?(language==='fr'?'Modèle indisponible · réessayez':'Model unavailable · try again'):(language==='fr'?'Chargement du CNN…':'Loading the CNN…'),width/2,height*.45,11);return;}
-  const result=results[Math.floor(time/7.5)%results.length],phase=time%7.5,stage=Math.min(4,Math.floor(phase/1.15)),top=132,bottom=height-202,cy=(top+bottom)/2,span=Math.min(184,bottom-top);
+  if(!model){label(failed?(language==='fr'?'Modèle indisponible · réessayez':'Model unavailable · try again'):(language==='fr'?'Chargement du CNN…':'Loading the CNN…'),width/2,height*.45,11);return;}
+  const result=resultFor(digits[Math.floor(time/7.5)%digits.length]),phase=time%7.5,stage=Math.min(4,Math.floor(phase/1.15)),top=132,bottom=height-202,cy=(top+bottom)/2,span=Math.min(184,bottom-top);
   const columns=[.10,.31,.51,.71,.89].map(r=>r*width),nodes=result.values.map((values,layer)=>values.map((value,index)=>({x:columns[layer],y:cy+(index-(values.length-1)/2)*(values.length===1?0:span/(values.length-1)),value,index})));
   for(let layer=0;layer<4;layer++){
    const strength=result.links[layer],peak=Math.max(...strength,.001);let edge=0;

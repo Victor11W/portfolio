@@ -24,13 +24,17 @@ export const ui = {
     neuralDescription:"Les activations réelles du CNN de chiffres. Une vue simplifiée pour suivre le calcul, des pixels à la réponse.",
     neuralAria:"Réseau convolutif MNIST du projet : entrée en pixels, canaux de convolution, neurones denses et dix chiffres de sortie. Activations réellement calculées.",
     hero1:'Du signal', hero2:'au système',
-    intro:'Je suis Victor. J’explore la rencontre entre intelligence artificielle et systèmes embarqués, avec l’envie de comprendre ce qui se passe sous le capot.',
-
-    viewProjects:'Explorer mes projets', scroll:'La suite, juste ici',
+    intro:'Je suis Victor. Mes projets vont du décodage d’une instruction machine à la reconnaissance d’un chiffre manuscrit. Ici, tu peux essayer les deux.',
+    viewProjects:'Explorer mes projets',
+    cardActions:{
+      'b-reality':'Découvrir l’étude EEG', processor:'Suivre une instruction', 'stm32-c':'Déclencher une interruption',
+      'q-learning':'Entraîner un agent', optiframe:'Découvrir la monture', 'neural-networks':'Dessiner un chiffre',
+      fpga:'Suivre un pixel', 'emerton-optimization':'Voir mon intervention', 'robot-simulator':'Découvrir le simulateur Java'
+    },
     processor:'CPU', robot:'Robot', neural:'Réseau IA', illustration:'Illustration interactive', pause:'Mettre l’animation en pause', play:'Reprendre l’animation',
     statistic1:'dossiers à explorer', statistic2:'stages en ingénierie', statistic3:'publication scientifique',
-    index:'Index des explorations', projectTitle:'Des idées aux', projectAccent:'réalisations.',
-    projectIntro:'De l’architecture d’un processeur à l’IA dans le navigateur. Chaque projet raconte un problème, une démarche et ce que j’en retiens.',
+    index:'Index des projets', projectTitle:'Carnet de', projectAccent:'projets.',
+    projectIntro:'Entre dans un projet pour manipuler une démo, lire le rapport ou examiner le code.',
     all:'Tous', ai:'IA & data', embedded:'Embarqué & hardware', software:'Logiciel & robotique',
     search:'Rechercher un projet ou une technologie', searchPlaceholder:'Un projet, une techno…', clearSearch:'Effacer la recherche',
     result:'projet', results:'projets', details:'Explorer le projet', noResults:'Aucun projet pour cette recherche.', noResultsSub:'Essaie « Python », « STM32 » ou un autre domaine.', reset:'Réinitialiser les filtres',
@@ -85,13 +89,17 @@ export const ui = {
     neuralDescription:"Real activations from the digit CNN. A reduced view of the computation, from pixels to the answer.",
     neuralAria:"The project’s MNIST CNN: input pixels, convolution channels, dense neurons and ten output digits. Activations are computed from the actual model.",
     hero1:'From signal', hero2:'to system',
-    intro:'I’m Victor. I explore the intersection of artificial intelligence and embedded systems, with a curiosity for how things work under the hood.',
-
-    viewProjects:'Explore my projects', scroll:'Keep exploring',
+    intro:'I’m Victor. My projects range from decoding a machine instruction to recognising a handwritten digit. Here you can try both.',
+    viewProjects:'Explore my projects',
+    cardActions:{
+      'b-reality':'Explore the EEG study', processor:'Follow an instruction', 'stm32-c':'Trigger an interrupt',
+      'q-learning':'Train an agent', optiframe:'Explore the frame design', 'neural-networks':'Draw a digit',
+      fpga:'Trace a pixel', 'emerton-optimization':'See what I changed', 'robot-simulator':'Explore the Java simulator'
+    },
     processor:'CPU', robot:'Robot', neural:'Neural net', illustration:'Interactive illustration', pause:'Pause the animation', play:'Resume the animation',
     statistic1:'projects to explore', statistic2:'engineering internships', statistic3:'scientific publication',
-    index:'An index of explorations', projectTitle:'From ideas to', projectAccent:'real things.',
-    projectIntro:'From processor architecture to in-browser AI. Each project tells the story of a problem, an approach and what I learned.',
+    index:'Project index', projectTitle:'Project', projectAccent:'notebook.',
+    projectIntro:'Open a project to try a demo, read the report or look through the code.',
     all:'All', ai:'AI & data', embedded:'Embedded & hardware', software:'Software & robotics',
     search:'Search for a project or technology', searchPlaceholder:'A project, a technology…', clearSearch:'Clear search',
     result:'project', results:'projects', details:'Explore project', noResults:'No projects match this search.', noResultsSub:'Try “Python”, “STM32” or another area.', reset:'Reset filters',
@@ -147,7 +155,7 @@ export const projects = [
  {
   id:'processor',visual:'cpu',color:'#e6b8ff',category:['embedded'],tech:['RISC-V','Assembly','16-bit ISA','Pipeline','Python','C','GNU toolchain'],
   title:p('Au cœur du processeur','Inside the processor'),kind:p('Projet académique · équipe · déc. 2024','Academic team project · Dec. 2024'),
-  short:p('Du décodage RISC-V à une ISA personnalisée, avec comparaison de compilations et étude du pipeline.','From RISC-V decoding to a custom ISA, comparing compiler outputs and studying the pipeline.'),
+  short:p('Désassembler un programme RISC-V, puis réécrire son addition de tableaux avec nos propres instructions de 16 bits.','We disassembled a RISC-V program, then expressed the same array addition in our own 16-bit instruction set.'),
   context:p('Un projet académique réalisé en équipe pour relier le code, les instructions machine et l’architecture matérielle. Le rapport comporte une étude RISC-V et la conception d’un jeu d’instructions personnalisé.','An academic team project connecting code, machine instructions and hardware architecture. The report covers a RISC-V study and the design of a custom instruction set.'),
   steps:p(['Développement d’outils Python pour décoder les instructions et retrouver le programme assembleur d’une addition de tableaux.','Réécriture en C et comparaison du code RISC-V désassemblé avec les options de compilation -O0, -O et -O3.','Conception d’une ISA à instructions de 16 bits et 16 registres, puis traduction du programme dans ce jeu d’instructions.','Analyse des aléas, du forwarding, des attentes et des annulations dans le pipeline RISC-V. Schématisation d’une architecture personnalisée Fetch / Decode / Execute.'],['Developed Python tools to decode instructions and recover the assembly program for array addition.','Rewrote the program in C and compared disassembled RISC-V code produced with -O0, -O and -O3.','Designed an ISA with 16-bit instructions and 16 registers, then translated the program into this instruction set.','Analysed hazards, forwarding, stalls and flushes in the RISC-V pipeline. Diagrammed a custom Fetch / Decode / Execute architecture.']),
   learn:p('Relier les formats binaires, le C, l’assembleur et les chemins de données. Raisonner sur les contraintes d’encodage et les dépendances entre instructions.','Connecting binary formats, C, assembly and datapaths. Reasoning about encoding constraints and instruction dependencies.'),
@@ -177,17 +185,17 @@ export const projects = [
  {
   id:'optiframe',visual:'glasses',color:'#b9daff',category:['ai','software'], tech:['React','TypeScript','ONNX','WebAssembly','Computer vision'],
   title:p('OptiFrame','OptiFrame'),kind:p('Hackathon CodeML · équipe · oct. 2026','CodeML hackathon · team · Oct. 2026'),
-  short:p('D’une photo de verres à une monture 3D, avec une IA qui tourne dans le navigateur.','From a photo of lenses to a 3D frame, with AI running in the browser.'),
+  short:p('Photographier un verre à côté d’une carte, en mesurer le contour et imprimer le patron de sa future monture.','Photograph a lens beside a card, measure its outline, then print a full-size template for a new frame.'),
   context:p('Réemployer des verres correcteurs en fabriquant une monture adaptée : le défi exploré en équipe lors du hackathon CodeML « Santé Numérique Sans Frontières ».','Reusing prescription lenses by creating a fitting frame: a challenge explored as a team at the CodeML “Santé Numérique Sans Frontières” hackathon.'),
   steps:p(['Calibration métrique à l’aide d’une carte ID-1 et correction de perspective par homographie.','Détection du verre avec YOLO-Worldv2, puis segmentation du contour avec SlimSAM. Inférence locale avec ONNX Runtime Web.','Mesure des dimensions et génération géométrique paramétrable. Export STL pour l’impression 3D et SVG à l’échelle 1:1.'],['Metric calibration using an ID-1 card and perspective correction through homography.','Lens detection with YOLO-Worldv2, then contour segmentation with SlimSAM. Local inference with ONNX Runtime Web.','Dimension measurements and parametric geometry generation. STL export for 3D printing and 1:1 SVG export.']),
   learn:p('Relier des modèles de vision préentraînés, une calibration géométrique et une application utilisable sous les contraintes mémoire du navigateur.','Connecting pretrained vision models, geometric calibration and a usable application within browser memory constraints.'),
   note:p('Prototype réalisé en équipe au hackathon CodeML. Les mesures dépendent notamment des reflets, de la netteté des photos et de la coplanarité du verre et de la carte.','A prototype built as a team at the CodeML hackathon. Measurements depend on reflections, image sharpness, and keeping the lens and card in the same plane.'),
-  links:[{label:'source',url:'https://github.com/Victor11W/OptiFrame'},{label:'demo',url:'https://victor11w.github.io/OptiFrame/'}]
+  links:[{label:'demo',url:'https://victor11w.github.io/OptiFrame/'}]
  },
  {
   id:'neural-networks',visual:'network',color:'#a4e4e1',category:['ai'],tech:['Python','NumPy','PyTorch','MNIST','CNN','Pygame'],
   title:p('Les neurones, à la main','Neurons, from first principles'),kind:p('Explorations · NumPy & PyTorch','Explorations · NumPy & PyTorch'),
-  short:p('Du réseau écrit à la main au CNN : reconnaître des chiffres et comprendre ce qui se passe entre les couches.','From a handwritten network to a CNN: recognising digits and understanding what happens between the layers.'),
+  short:p('D’un neurone programmé à la main à un CNN entraîné sur MNIST. Dessinez un chiffre pour voir à quels traits réagissent ses filtres.','From a hand-coded neuron to a CNN trained on MNIST. Sketch a digit to see which strokes activate its filters.'),
   context:p('Une exploration des mécanismes d’apprentissage sur les chiffres MNIST, avec une interface de dessin Pygame. Le dossier contient aussi une expérimentation PyTorch de classification binaire d’images de visages, qui prolonge le travail sur les réseaux convolutifs.','An exploration of learning mechanisms using MNIST digits, with a Pygame drawing interface. The folder also contains a PyTorch experiment in binary classification of face images, extending the work on convolutional networks.'),
   steps:p(['Prototype NumPy 784 → 32 → 32 → 10 : propagation, activations sigmoïdes, calcul manuel de dérivées et mise à jour des paramètres.','CNN PyTorch : deux convolutions à 32 puis 64 canaux, ReLU, max-pooling et couches denses 128 → 10. Entraînement prévu avec Adam et une perte d’entropie croisée.','Sauvegarde des poids et interface de dessin. La démo du portfolio exécute le CNN sauvegardé avec une adaptation JavaScript locale ; elle montre l’entrée et quatre cartes d’activation.'],['NumPy prototype, 784 → 32 → 32 → 10: forward passes, sigmoid activations, handwritten derivatives and parameter updates.','PyTorch CNN: two convolutions with 32 then 64 channels, ReLU, max-pooling and 128 → 10 dense layers. The training script uses Adam and cross-entropy loss.','Saved weights and a drawing interface. The portfolio demo runs the saved CNN through a local JavaScript adaptation, showing its input and four activation maps.']),
   learn:p('Passer des opérations élémentaires à une architecture convolutive, puis relier prétraitement, inférence et visualisation. Comprendre aussi qu’un modèle entraîné sur MNIST ne reconnaît pas toujours un dessin libre.','Moving from elementary operations to a convolutional architecture, then connecting preprocessing, inference and visualisation. Also understanding that a model trained on MNIST does not always recognise a freehand drawing.'),

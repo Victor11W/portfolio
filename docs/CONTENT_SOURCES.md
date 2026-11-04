@@ -29,6 +29,13 @@
 
 Le catalogue compte treize dossiers : onze entrées de projets de la base, une fiche de recherche professionnelle et une fiche limitée à la contribution de Victor en optimisation chez Emerton Data. L’entrée réseaux de neurones regroupe deux réalisations. Ce décompte ne désigne pas treize projets indépendants attribués à Victor seul.
 
+## Pièces présentées dans les fiches approfondies
+
+- **Processeur.** L’encodage des registres et le format arithmétique sont documentés à la page 17 du rapport de l’équipe. Les deux additions aux adresses 0x22 et 0x24 viennent de la réécriture du programme pour son ISA, page 22. [Rapport, p. 17](../assets/Rapport_RISCV_Architecture_Processeur.pdf#page=17) · [Traduction, p. 22](../assets/Rapport_RISCV_Architecture_Processeur.pdf#page=22)
+- **Chiffres manuscrits.** La fonction `sigmoid` est reproduite depuis `reconnaissance_chiffre.py`, le prototype NumPy. Le CNN PyTorch et ses poids sont ceux utilisés par l’atelier de dessin. [Archive du projet de chiffres](../assets/Code_Reconnaissance_Chiffres.zip) · [Origine et vérification des poids](DIGIT_MODEL.md)
+- **OptiFrame.** L’historique du projet d’équipe documente le travail de Victor sur la calibration métrique (commit `a2cd124`) et la génération du patron de face (commit `3218b82`). Pour le portfolio, l’exporteur d’OptiFrame a traité deux contours synthétiques. Le fichier conserve une barre de contrôle de 10 mm à mesurer après impression à 100 %. [Patron imprimable](../assets/optiframe-frame.svg)
+- **Q-learning.** La grille et le calcul de sa table de valeurs ont été créés pour le portfolio. Les trajets affichés proviennent des essais de cette grille. Le poster de l’équipe décrit séparément Chartichaud et l’expérience sur Pong. [Poster PROJ104](../assets/Poster_Q_Learning_Chartichaud.pdf)
+
 ## Limites préservées
 
 - Pas de niveau avancé revendiqué en C.
@@ -52,7 +59,7 @@ Un essai antérieur de génération de CV génériques n’avait pas passé la c
 
 ## Liens externes
 
-Les URL LinkedIn, GitHub/OptiFrame, démo et DOI proviennent des données documentées. Leur disponibilité publique n’a pas pu être confirmée par l’outil web utilisé pendant la session. Aucun accès public au code OptiFrame n’est affirmé. Un contrôle dans le compte habituel de Victor sera utile avant publication.
+Les adresses LinkedIn, de démonstration OptiFrame et de publication IEEE proviennent des données documentées. Le dépôt de code OptiFrame renvoie une réponse 404 lors de la vérification publique. La fiche renvoie à la démonstration et fournit le patron SVG directement.
 
 ## Données locales
 

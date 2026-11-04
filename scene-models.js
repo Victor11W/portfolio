@@ -79,6 +79,9 @@ export function robotKinematics(time=0) {
  });
  return {shoulder:rotate(shoulder),elbow:rotate(elbow),wrist:rotate(wrist),local:{shoulder,elbow,wrist},grasp,yaw,shoulderAngle,forearmAngle,toolAngle:-Math.PI/2,jawGap,upperLength,forearmLength,objects,phase,index,cycle,stacked:objects.filter(o=>o.state==='stacked').length};
 }
+// The joints translate with the arm. Their rings, triangle indices and local
+// normals do not change during a cycle; keep one template per physical part.
+const robotCylinderParts=new Map();
 export function createRobotModel(time=0) {
  const vertices=[],faces=[],pose=robotKinematics(time),localPose=pose.local;
  const add=(a,b)=>a.map((v,i)=>v+b[i]),sub=(a,b)=>a.map((v,i)=>v-b[i]),mul=(a,s)=>a.map(v=>v*s);
@@ -98,17 +101,25 @@ export function createRobotModel(time=0) {
   }
  }
  function cylinder(center,radius,length,axis,material,segments=24){
-  const w=norm(axis),reference=Math.abs(w[1])<.9?[0,1,0]:[0,0,1],u=norm(cross(reference,w)),v=cross(w,u),offset=vertices.length;
-  for(const sign of [-1,1])for(let i=0;i<segments;i++){
-   const a=i/segments*Math.PI*2;
-   vertices.push(add(center,add(mul(w,sign*length/2),add(mul(u,Math.cos(a)*radius),mul(v,Math.sin(a)*radius)))));
+  const offset=vertices.length,key=[offset,radius,length,...axis,segments,material].join('/');
+  let part=robotCylinderParts.get(key);
+  if(!part){
+   const w=norm(axis),reference=Math.abs(w[1])<.9?[0,1,0]:[0,0,1],u=norm(cross(reference,w)),v=cross(w,u);
+   part={points:[],faces:[]};
+   for(const sign of [-1,1])for(let i=0;i<segments;i++){
+    const a=i/segments*Math.PI*2;
+    part.points.push(add(mul(w,sign*length/2),add(mul(u,Math.cos(a)*radius),mul(v,Math.sin(a)*radius))));
+   }
+   part.faces.push({indices:Array.from({length:segments},(_,i)=>offset+segments+i),normal:w,material});
+   part.faces.push({indices:Array.from({length:segments},(_,i)=>offset+i).reverse(),normal:mul(w,-1),material});
+   for(let i=0;i<segments;i++){
+    const j=(i+1)%segments,a=(i+.5)/segments*Math.PI*2;
+    part.faces.push({indices:[offset+i,offset+j,offset+segments+j,offset+segments+i],normal:add(mul(u,Math.cos(a)),mul(v,Math.sin(a))),material,curved:true});
+   }
+   robotCylinderParts.set(key,part);
   }
-  faces.push({indices:Array.from({length:segments},(_,i)=>offset+segments+i),normal:w,material});
-  faces.push({indices:Array.from({length:segments},(_,i)=>offset+i).reverse(),normal:mul(w,-1),material});
-  for(let i=0;i<segments;i++){
-   const j=(i+1)%segments,a=(i+.5)/segments*Math.PI*2;
-   faces.push({indices:[offset+i,offset+j,offset+segments+j,offset+segments+i],normal:add(mul(u,Math.cos(a)),mul(v,Math.sin(a))),material,curved:true});
-  }
+  for(const p of part.points)vertices.push([center[0]+p[0],center[1]+p[1],center[2]+p[2]]);
+  for(const f of part.faces)faces.push({...f});
  }
  function beam(start,end,width,depth,material,zOffset=0){
   const d=sub(end,start),length=Math.hypot(...d),uy=mul(d,1/length),ux=[uy[1],-uy[0],0],center=mul(add(start,end),.5);center[2]+=zOffset;
@@ -151,7 +162,8 @@ export function createRobotModel(time=0) {
   prism(padCenter,[.016,.10,.16],'coreAccent',.004);
   for(let i=gripperFaceStart;i<faces.length;i++)faces[i].role='gripper';
  }
- const rotate=p=>[p[0]*Math.cos(pose.yaw)-p[2]*Math.sin(pose.yaw),p[1],p[0]*Math.sin(pose.yaw)+p[2]*Math.cos(pose.yaw)];
+ const yawCos=Math.cos(pose.yaw),yawSin=Math.sin(pose.yaw);
+ const rotate=p=>[p[0]*yawCos-p[2]*yawSin,p[1],p[0]*yawSin+p[2]*yawCos];
  for(let i=armVertexStart;i<vertices.length;i++)vertices[i]=rotate(vertices[i]);
  for(let i=armFaceStart;i<faces.length;i++)faces[i].normal=rotate(faces[i].normal);
  pose.objects.forEach((object,index)=>{
@@ -162,7 +174,7 @@ export function createRobotModel(time=0) {
  return {vertices,faces,pose};
 }
 
-let robotFramingVertices;
+let robotFramingVertices,robotCameraBounds;
 export function sceneProjection(vertices,width,height,{mode='cpu',panX=0,panY=0,time=0}={}) {
  const yaw=-.59+panX*.32+(mode==='cpu'?Math.sin(time*.18)*.022:0);
  const elevation=(mode==='cpu'?.85:.47)+panY*.14;
@@ -179,9 +191,18 @@ export function sceneProjection(vertices,width,height,{mode='cpu',panX=0,panY=0,
   for(let t=0;t<ROBOT_CYCLE_SECONDS;t+=.3){const pose=robotKinematics(t);box(pose.elbow,.30);box(pose.wrist,.23);box(pose.grasp,[.34,.22,.34]);pose.objects.forEach(o=>box(o.center,.21));}
   box([0,.475,0],[.78,.645,.67]);
  }
- const frameVertices=mode==='robot'?robotFramingVertices:vertices;
- const bounds=frameVertices.map(raw);
- const minX=Math.min(...bounds.map(p=>p.x)),maxX=Math.max(...bounds.map(p=>p.x)),minY=Math.min(...bounds.map(p=>p.y)),maxY=Math.max(...bounds.map(p=>p.y));
+ // The robot moves inside a fixed envelope. Its projected bounds change with
+ // the camera, not the arm. The CPU already has projected points above.
+ let bounds=mode==='robot'&&robotCameraBounds?.yaw===yaw&&robotCameraBounds.elevation===elevation?robotCameraBounds:null;
+ if(!bounds){
+  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+  const include=p=>{if(p.x<minX)minX=p.x;if(p.x>maxX)maxX=p.x;if(p.y<minY)minY=p.y;if(p.y>maxY)maxY=p.y;};
+  if(mode==='robot')for(const vertex of robotFramingVertices)include(raw(vertex));
+  else for(const point of points)include(point);
+  bounds={minX,maxX,minY,maxY,yaw,elevation};
+  if(mode==='robot')robotCameraBounds=bounds;
+ }
+ const {minX,maxX,minY,maxY}=bounds;
  const top=width<400?96:100,bottom=height-(mode==='cpu'?220:140),margin=width<400?26:36;
  const scale=Math.min((width-2*margin)/(maxX-minX),(bottom-top)/(maxY-minY));
  const ox=width/2-(minX+maxX)/2*scale,oy=(top+bottom)/2-(minY+maxY)/2*scale;

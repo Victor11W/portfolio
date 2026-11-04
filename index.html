@@ -25,11 +25,10 @@
 </head>
 <body id="top">
   <a class="skip-link" href="#main" data-i18n="skip">Aller au contenu</a>
-  <div class="reading-progress" aria-hidden="true"></div>
-  <header class="site-header">
+  <header class="site-header section-shell">
     <a class="brand" href="#top" aria-label="Victor Woelffel — accueil">
       <svg viewBox="0 0 44 44" aria-hidden="true"><path d="M8 13 16 31 22 17 28 31 36 13M22 17 19 10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>
-      <span>VICTOR<br>WOELFFEL<span class="brand-dot">.</span></span>
+      <span>Victor Woelffel<span class="brand-dot">.</span></span>
     </a>
     <nav class="desktop-nav" aria-label="Navigation principale">
       <a href="#projects" data-i18n="projects">Projets</a>
@@ -51,10 +50,10 @@
       <div class="hero-copy">
         <p class="eyebrow"><span class="tiny-cross" aria-hidden="true">+</span><span data-i18n="eyebrow">Élève ingénieur · Télécom Paris</span></p>
         <h1 id="hero-title"><span data-i18n="hero1">Du signal</span><br><span class="headline-second" data-i18n="hero2">au système</span><span class="accent">.</span></h1>
-        <p class="hero-intro" data-i18n="intro">Je suis Victor. J’explore la rencontre entre intelligence artificielle et systèmes embarqués, avec l’envie de comprendre ce qui se passe sous le capot.</p>
-
+        <p class="hero-intro" data-i18n="intro">Je suis Victor. Mes projets vont du décodage d’une instruction machine à la reconnaissance d’un chiffre manuscrit. Ici, tu peux essayer les deux.</p>
         <div class="hero-actions">
-          <a class="button button-primary" href="#projects"><span data-i18n="viewProjects">Explorer mes projets</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg></a>
+          <a class="button button-primary" href="#projects"><span data-i18n="viewProjects">Explorer mes projets</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15m-6-6 6 6 6-6"/></svg></a>
+          <a id="scene-project-link" class="hero-project-link" href="#project/processor" data-project="processor"><span>Suivre une instruction</span><span aria-hidden="true">→</span></a>
         </div>
       </div>
       <div class="hero-art" id="hero-art" role="group" aria-labelledby="scene-title">
@@ -73,19 +72,14 @@
         </div>
         <p class="scene-description" id="scene-description">Fetch, Decode, Execute : trois étages pour suivre un programme, ses registres et ses accès mémoire.</p>
       </div>
-      <div class="hero-bottom">
-        <a class="scroll-cue mono" href="#projects"><span class="scroll-line" aria-hidden="true">↓</span><span data-i18n="scroll">La suite, juste ici</span></a>
-        <span class="hero-location mono">TÉLÉCOM PARIS <span aria-hidden="true">↔</span> POLYTECHNIQUE MONTRÉAL</span>
-      </div>
     </section>
-    <div class="summary-strip section-shell" aria-label="Quelques repères">
-      <div><span class="summary-number">13<span>↗</span></span><span data-i18n="statistic1">dossiers à explorer</span></div>
-      <div><span class="summary-number">02</span><span data-i18n="statistic2">stages en ingénierie</span></div>
-      <div><span class="summary-number">01</span><span data-i18n="statistic3">publication scientifique</span></div>
-      <span class="strip-mark" aria-hidden="true"><svg viewBox="0 0 80 80"><path d="M40 5v70M5 40h70M15 15l50 50M15 65l50-50"/></svg></span>
-    </div>
+    <nav class="summary-strip section-shell" aria-label="Quelques repères">
+      <a href="#projects"><span class="summary-number">13</span><span data-i18n="statistic1">dossiers à explorer</span><span class="stat-arrow" aria-hidden="true">↘</span></a>
+      <a href="#journey"><span class="summary-number">02</span><span data-i18n="statistic2">stages en ingénierie</span><span class="stat-arrow" aria-hidden="true">↘</span></a>
+      <a href="#publication"><span class="summary-number">01</span><span data-i18n="statistic3">publication scientifique</span><span class="stat-arrow" aria-hidden="true">↘</span></a>
+    </nav>
     <section id="projects" class="projects-section section-shell section-space" aria-labelledby="project-title">
-      <div class="section-heading"><p class="section-index mono"><span>01 /</span> <span data-i18n="index">Index des explorations</span></p><div class="heading-row"><h2 id="project-title"><span data-i18n="projectTitle">Des idées aux</span><br><span class="muted-heading" data-i18n="projectAccent">réalisations.</span></h2><p class="section-intro" data-i18n="projectIntro">De l’architecture d’un processeur à l’IA dans le navigateur. Chaque projet raconte un problème, une démarche et ce que j’en retiens.</p></div></div>
+      <div class="section-heading"><p class="section-index mono"><span>01 /</span> <span data-i18n="index">Index des projets</span></p><div class="heading-row"><h2 id="project-title"><span data-i18n="projectTitle">Carnet de</span> <span class="muted-heading" data-i18n="projectAccent">projets.</span></h2><p class="section-intro" data-i18n="projectIntro">Entre dans un projet pour manipuler une démo, lire le rapport ou examiner le code.</p></div></div>
       <div class="project-toolbar">
         <div class="filter-group" role="group" aria-label="Filtrer les projets">
           <button class="filter-button" type="button" data-filter="all" aria-pressed="true"><span data-i18n="all">Tous</span><span class="filter-count">13</span></button>

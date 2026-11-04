@@ -1,20 +1,19 @@
 import {profile,ui,projects,skills} from './content.js';
 import {illustration} from './visuals.js';
 import {createScene} from './scene.js';
-import {digitLabMarkup,mountDigitLab} from './digit-lab.js';
-import {processorLabMarkup,mountProcessorLab} from './processor-lab.js';
-import {hardwareLabMarkup,mountHardwareLab} from './hardware-labs.js';
 import {filterProjects,presentationFromSearch,escapeHTML as esc} from './project-utils.js';
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
 const store = {get(key){try{return localStorage.getItem(key);}catch{return null;}},set(key,value){try{localStorage.setItem(key,value);}catch{}}};
 let language=store.get('vw-language')==='en'?'en':'fr';
 const audience=presentationFromSearch(location.search);
-let category=audience.category,query='',expanded=false,currentProject=null,activeScene=audience.scene,lastFocus=null,projectBackHash='#projects',hasProjectHistory=false,toastTimer;
+let category=audience.category,query='',expanded=false,currentProject=null,activeScene=audience.scene,lastFocus=null,projectBackHash='#projects',toastTimer;
 const projectDialog=$('#project-dialog');
-const scene=createScene($('#system-canvas'));
+const scene=createScene($('#system-canvas'),{covered:projects.some(p=>location.hash==='#project/'+p.id)});
 scene.setMode(activeScene);
-let digitLab=null,processorLab=null,hardwareLab=null;
+let activeDetail=null,detailRequest=0;
+const enhancedProjects=new Set(['processor','neural-networks','optiframe','q-learning','stm32-c','fpga']);
+const loadProjectDetails=()=>import('./project-details.js');
 const arrow='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14"/></svg>';
 const txt = () => ui[language];
 const tags = values => '<ul class="tags">'+values.map(v=>'<li class="tag">'+esc(v)+'</li>').join('')+'</ul>';
@@ -23,11 +22,20 @@ const tags = values => '<ul class="tags">'+values.map(v=>'<li class="tag">'+esc(
 function outcomeBlock(project,compact=false){
  if(!project?.outcome)return '';
  const result=project.outcome;
+ if(!compact&&project.disclosure==='contribution-only'&&result.value==='−30 %'){
+  const fr=language==='fr';
+  return '<figure class="runtime-result"><figcaption><strong>'+esc(result.value)+'</strong><span>'+esc(result.label[language])+'</span></figcaption><p>'+esc(fr?'Temps de calcul relatif, avant et après simplification. Base 100.':'Relative computation time before and after simplification. Baseline: 100.')+'</p><dl>'+[[fr?'Avant':'Before',100],[fr?'Après':'After',70]].map(([label,value])=>'<div><dt>'+label+'</dt><dd><i aria-hidden="true" style="width:'+value+'%"></i><b>'+value+'</b></dd></div>').join('')+'</dl></figure>';
+ }
  return '<div class="project-outcome'+(compact?' project-outcome--compact':'')+'"><strong>'+esc(result.value)+'</strong><div><span>'+esc(result.label[language])+'</span>'+(!compact?'<p>'+esc(result.caption[language])+'</p>':'')+'</div></div>';
 }
 
 function updateSceneText() {
  const t=txt(),prefix=activeScene==='cpu'?'cpu':activeScene==='robot'?'robot':'neural';
+ const projectId={cpu:'processor',robot:'robot-simulator',neural:'neural-networks'}[activeScene];
+ const projectLink=$('#scene-project-link');
+ projectLink.href='#project/'+projectId;
+ projectLink.dataset.project=projectId;
+ projectLink.firstElementChild.textContent=t.cardActions[projectId];
  $$('button[data-scene]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.scene===activeScene)));
  $('#scene-title').textContent=t[prefix+'Title'];
  $('#scene-description').textContent=t[prefix+'Description'];
@@ -38,7 +46,7 @@ function updateSceneText() {
 
 function setText() {
  const t=txt();
- $('.summary-strip .summary-number').innerHTML=projects.length+'<span>↗</span>';
+ $('.summary-strip .summary-number').textContent=projects.length;
  $('.filter-count').textContent=projects.length;
  document.documentElement.lang=language;
  document.title=language==='fr'?'Victor Woelffel — Du signal au système':'Victor Woelffel — From signal to system';
@@ -73,7 +81,20 @@ function renderProjects() {
  const visible=showAll?filtered:filtered.slice(0,6);
  $('#project-grid').innerHTML=visible.map(p=>{
   const index=String(projects.indexOf(p)+1).padStart(2,'0');
-  return '<article class="project-card"><a class="project-open" href="#project/'+p.id+'" data-project="'+p.id+'" aria-labelledby="project-title-'+p.id+'" aria-describedby="project-desc-'+p.id+'"><div class="project-visual" style="--project-color:'+p.color+'">'+illustration(p.visual)+'<span class="project-figure">FIG. '+index+' / '+esc(t.illustrationNote)+'</span><span class="project-arrow" aria-hidden="true">↗</span></div><div class="project-info"><p class="project-meta">'+esc(p.kind[language])+'</p><h3 id="project-title-'+p.id+'">'+esc(p.title[language])+'</h3><p class="project-description" id="project-desc-'+p.id+'">'+esc(p.short[language])+'</p>'+outcomeBlock(p,true)+tags(p.tech.slice(0,4))+'<span class="project-explore"><span>'+esc(t.details)+'</span><span aria-hidden="true">↗</span></span></div></a></article>';
+  const action=t.cardActions[p.id]||t.details;
+  return `<article class="project-card">
+    <a class="project-open" href="#project/${p.id}" data-project="${p.id}" aria-labelledby="project-title-${p.id}" aria-describedby="project-desc-${p.id} project-action-${p.id}">
+      <div class="project-visual" style="--project-color:${p.color}">
+        ${illustration(p.visual)}<span class="project-figure">FIG. ${index} / ${esc(t.illustrationNote)}</span>
+      </div>
+      <div class="project-info">
+        <p class="project-meta">${esc(p.kind[language])}</p><h3 id="project-title-${p.id}">${esc(p.title[language])}</h3>
+        <p class="project-description" id="project-desc-${p.id}">${esc(p.short[language])}</p>
+        ${outcomeBlock(p,true)}${tags(p.tech.slice(0,3))}
+        <span class="project-explore" id="project-action-${p.id}"><span>${esc(action)}</span><span aria-hidden="true">→</span></span>
+      </div>
+    </a>
+  </article>`;
  }).join('');
  $('#result-count').textContent=filtered.length+' '+(filtered.length===1?t.result:t.results);
  $('#showing-count').textContent=visible.length+' / '+filtered.length+' '+t.showing;
@@ -108,48 +129,98 @@ function resourceLink(link,index) {
  return '<a class="button '+(index===0?'button-primary':'button-secondary')+'" href="'+esc(link.url)+'"'+attributes+'>'+esc(txt()[link.label])+icon+'</a>';
 }
 
+function disposeDetail(){
+ detailRequest++;
+ activeDetail?.destroy();activeDetail=null;
+}
+function projectNarrative(p,t){
+ if(p.disclosure==='contribution-only'){
+  const role=language==='fr'?'Ma contribution':'My contribution';
+  return '<section class="detail-section"><h3>'+role+'</h3><p>'+esc(p.steps[language][1])+'</p></section><section class="detail-section"><h3>'+esc(t.learned)+'</h3><p>'+esc(p.learn[language])+'</p></section>';
+ }
+ return '<section class="detail-section"><h3>'+esc(t.context)+'</h3><p>'+esc(p.context[language])+'</p></section><section class="detail-section"><h3>'+esc(t.approach)+'</h3><ul>'+p.steps[language].map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul></section><section class="detail-section"><h3>'+esc(t.learned)+'</h3><p>'+esc(p.learn[language])+'</p></section>';
+}
+let stylePromise;
+function detailStyles(){
+ if(!stylePromise)stylePromise=new Promise((resolve,reject)=>{
+  const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href='./project-details.css';
+  sheet.onload=resolve;sheet.onerror=()=>{sheet.remove();stylePromise=null;reject(new Error('Project stylesheet unavailable'));};
+  document.head.append(sheet);
+ });
+ return stylePromise;
+}
+async function enhanceProject(host,id,lang,request){
+ try{
+  const [{mountProjectDetails}]=await Promise.all([loadProjectDetails(),detailStyles()]);
+  if(request!==detailRequest||!host.isConnected)return;
+  activeDetail=mountProjectDetails(host,id,lang);
+  if(activeDetail.hasNotes)$('#standard-narrative').hidden=true;
+ }catch{
+  if(request!==detailRequest||!host.isConnected)return;
+  const again=lang==='fr'?'Réessayer de charger le dossier interactif':'Try loading the interactive case study again';
+  host.innerHTML='<button type="button" class="text-button">'+esc(again)+'</button>';
+  host.querySelector('button').addEventListener('click',()=>enhanceProject(host,id,lang,request),{once:true});
+ }
+}
 function renderProjectDetail(id) {
  const p=projects.find(item=>item.id===id);
  if(!p)return;
- const t=txt(),index=projects.indexOf(p);
- digitLab?.destroy();digitLab=null;processorLab?.destroy();processorLab=null;hardwareLab?.destroy();hardwareLab=null;
+ disposeDetail();
+ const t=txt(),index=projects.indexOf(p),enhanced=enhancedProjects.has(id);
  currentProject=id;
+ document.title=p.title[language]+' — Victor Woelffel';
  $('#detail-index').textContent=String(index+1).padStart(2,'0')+' / '+String(projects.length).padStart(2,'0')+' — '+t.projectDialog;
- $('#project-detail').innerHTML='<div class="detail-hero '+(['neural-networks','processor','stm32-c','fpga'].includes(id)?'detail-hero--compact':'')+'" style="--project-color:'+p.color+'">'+illustration(p.visual)+'<span class="mono">'+esc(t.illustrationNote)+'</span></div><div class="detail-body"><p class="project-meta">'+esc(p.kind[language])+'</p><h2 id="detail-title">'+esc(p.title[language])+'</h2><p class="detail-lead">'+esc(p.short[language])+'</p>'+outcomeBlock(p)+tags(p.tech)+(p.links.length?'<div class="detail-links detail-links--intro">'+p.links.map(resourceLink).join('')+'</div>':'')+(id==='neural-networks'?digitLabMarkup(language):id==='processor'?processorLabMarkup(language):['stm32-c','fpga'].includes(id)?hardwareLabMarkup(id,language):'')+'<section class="detail-section"><h3>'+esc(t.context)+'</h3><p>'+esc(p.context[language])+'</p></section><section class="detail-section"><h3>'+esc(t.approach)+'</h3><ul>'+p.steps[language].map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul></section><section class="detail-section"><h3>'+esc(t.learned)+'</h3><p>'+esc(p.learn[language])+'</p></section>'+(p.note[language]?'<p class="detail-note"><strong>'+esc(t.limits)+'.</strong> '+esc(p.note[language])+'</p>':'')+'</div>';
- if(id==='neural-networks')digitLab=mountDigitLab($('#project-detail'),language);
- if(id==='processor')processorLab=mountProcessorLab($('#project-detail'),language);
- if(['stm32-c','fpga'].includes(id))hardwareLab=mountHardwareLab($('#project-detail'),id,language);
+ $('#project-detail').innerHTML='<div class="detail-hero '+(enhanced?'detail-hero--compact':'')+'" style="--project-color:'+p.color+'">'+illustration(p.visual)+'<span class="mono">'+esc(t.illustrationNote)+'</span></div><div class="detail-body"><p class="project-meta">'+esc(p.kind[language])+'</p><h2 id="detail-title" tabindex="-1">'+esc(p.title[language])+'</h2><p class="detail-lead">'+esc(p.short[language])+'</p>'+outcomeBlock(p)+tags(p.tech)+(p.links.length?'<div class="detail-links detail-links--intro">'+p.links.map(resourceLink).join('')+'</div>':'')+'<div id="detail-feature"></div><div id="standard-narrative">'+projectNarrative(p,t)+'</div>'+(p.note[language]?'<p class="detail-note"><strong>'+esc(t.limits)+'.</strong> '+esc(p.note[language])+'</p>':'')+'</div>';
+ if(enhanced)enhanceProject($('#detail-feature'),id,language,detailRequest);
  projectDialog.scrollTop=0;
 }
-function openProject(id,{route=false}={}) {
+function openProject(id,{route=false,trigger=null}={}) {
  if(!projects.some(p=>p.id===id))return;
  if(!projectDialog.open) {
-  lastFocus=document.activeElement;
-  if(!location.hash.startsWith('#project/'))projectBackHash=location.hash||'#projects';
-  if(!route){history.pushState({vwProject:id},'','#project/'+id);hasProjectHistory=true;}
+  lastFocus=trigger||document.activeElement;
+  projectBackHash=location.hash.startsWith('#project/')?'#projects':location.hash||'#projects';
+  if(!route)history.pushState({vwReturn:true},'','#project/'+id);
   renderProjectDetail(id);
   projectDialog.showModal();
-  document.body.classList.add('modal-open');
- } else {renderProjectDetail(id);if(!route)history.replaceState({vwProject:id},'','#project/'+id);}
+  document.body.classList.add('modal-open');scene.setCovered(true);
+ } else {
+  if(currentProject===id)return;
+  renderProjectDetail(id);
+  if(!route)history.replaceState(history.state,'','#project/'+id);
+ }
+ $('#detail-title').focus({preventScroll:true});projectDialog.scrollTop=0;
+}
+let returnFocus=null;
+function restoreProjectFocus(){
+ const target=returnFocus;returnFocus=null;
+ if(target?.isConnected)requestAnimationFrame(()=>{if(!projectDialog.open)target.focus({preventScroll:true});});
 }
 function closeProject({historyUpdate=true}={}) {
  if(!projectDialog.open)return;
- const returningId=currentProject;
- digitLab?.destroy();digitLab=null;processorLab?.destroy();processorLab=null;hardwareLab?.destroy();hardwareLab=null;
- currentProject=null;projectDialog.close();document.body.classList.remove('modal-open');
- if(historyUpdate){if(hasProjectHistory){hasProjectHistory=false;history.back();}else {history.replaceState(null,'',projectBackHash);$('#projects').scrollIntoView({behavior:'instant',block:'start'});}}
- const target=lastFocus?.isConnected&&lastFocus!==document.body?lastFocus:document.querySelector('[data-project="'+returningId+'"]')||$('.filter-button');
- if(target instanceof HTMLElement)target.focus({preventScroll:true});
+ disposeDetail();currentProject=null;projectDialog.close();document.body.classList.remove('modal-open');scene.setCovered(false);
+ document.title=language==='fr'?'Victor Woelffel — Du signal au système':'Victor Woelffel — From signal to system';
+ const indexHeading=$('#project-title');indexHeading.tabIndex=-1;
+ returnFocus=lastFocus?.isConnected&&lastFocus!==document.body?lastFocus:indexHeading;
+ if(historyUpdate){
+  if(history.state?.vwReturn){history.back();return;}
+  else {history.replaceState(null,'',projectBackHash);$('#projects').scrollIntoView({behavior:'instant',block:'start'});}
+ }
+ restoreProjectFocus();
 }
 function route() {
  const match=location.hash.match(/^#project\/([a-z0-9-]+)$/);
- if(match){if(projects.some(p=>p.id===match[1]))openProject(match[1],{route:true});else history.replaceState(null,'','#projects');}
- else if(projectDialog.open)closeProject({historyUpdate:false});
+ if(match&&projects.some(p=>p.id===match[1])){openProject(match[1],{route:true});return;}
+ if(projectDialog.open)closeProject({historyUpdate:false});
+ else if(returnFocus)restoreProjectFocus();
+ if(location.hash.startsWith('#project/')){
+  history.replaceState(null,'','#projects');
+  $('#projects').scrollIntoView({behavior:'instant',block:'start'});
+ }
 }
 document.addEventListener('click',event=>{
  const trigger=event.target.closest('[data-project]');
- if(!trigger)return;
- event.preventDefault();openProject(trigger.dataset.project);
+ if(!trigger||event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+ event.preventDefault();openProject(trigger.dataset.project,{trigger});
 });
 $('#close-project').addEventListener('click',()=>closeProject());
 projectDialog.addEventListener('cancel',event=>{event.preventDefault();closeProject();});
@@ -193,25 +264,4 @@ matchMedia('(min-width: 721px)').addEventListener('change',closeMenu);
 function toast(message){clearTimeout(toastTimer);$('#toast').textContent=message;$('#toast').hidden=false;toastTimer=setTimeout(()=>{$('#toast').hidden=true;},3500);}
 $('#copy-email').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(profile.email);toast(txt().copied);}catch{toast(txt().copyFail+' '+profile.email);}});
 function motionBehavior(){return matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth';}
-const sectionObserver=new IntersectionObserver(entries=>{
- entries.forEach(entry=>{if(entry.isIntersecting){$$('.desktop-nav a').forEach(a=>{if(a.hash==='#'+entry.target.id)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});}});
-},{rootMargin:'-15% 0px -60% 0px',threshold:0});
-$$('main>section[id]').forEach(section=>sectionObserver.observe(section));
-const siteHeader=$('.site-header');
-let progressFrame=0,lastScrollY=scrollY,scrollTravel=0;
-siteHeader.addEventListener('focusin',()=>siteHeader.classList.remove('header-away'));
-function updateProgress(){
- const y=Math.max(0,scrollY),max=document.documentElement.scrollHeight-innerHeight;
- $('.reading-progress').style.transform='scaleX('+(max>0?Math.min(y/max,1):0)+')';
- const delta=y-lastScrollY;
- if(Math.sign(delta)!==Math.sign(scrollTravel))scrollTravel=delta;else scrollTravel+=delta;
- if(y<64||!$('#mobile-nav').hidden||siteHeader.querySelector(':focus-visible'))siteHeader.classList.remove('header-away');
- else if(scrollTravel>16&&y>100)siteHeader.classList.add('header-away');
- else if(scrollTravel< -12)siteHeader.classList.remove('header-away');
- if(y<150)$$('.desktop-nav a').forEach(a=>a.removeAttribute('aria-current'));
- lastScrollY=y;progressFrame=0;
-}
-window.addEventListener('scroll',()=>{if(!progressFrame)progressFrame=requestAnimationFrame(updateProgress);},{passive:true});
-window.addEventListener('resize',updateProgress,{passive:true});
-
-render();updateThemeButton();updateProgress();route();
+render();updateThemeButton();route();
