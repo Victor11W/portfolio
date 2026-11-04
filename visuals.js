@@ -43,27 +43,6 @@ function displayControllerDrawing() {
  </g>`;
 }
 
-function digitDrawing() {
- // A hand-authored schematic input and two indicative feature maps.
- const input=['0111110','0000110','0000100','0001100','0001000','0011000','0010000'];
- const features=[['0111','0001','0010','0100'],['0001','0011','0010','0100']];
- function pixelGrid(rows,x,y,size) {
-   return rows.flatMap((row,iy)=>[...row].map((on,ix)=>rect(x+ix*size,y+iy*size,size-1,size-1,
-     on==='1'?'fill="#286254" stroke="none"':'fill="#a0cec1" stroke="none"'))).join('');
- }
- return `<g stroke-width="1.2">
-   ${rect(42,100,115,115,'rx="4" fill="#d5f0e3"')}${pixelGrid(input,56,114,12.5)}
-   <path d="M161 157h29m-6-5 6 5-6 5m94-5h36m-6-5 6 5-6 5"/>
-   ${rect(198,76,77,75,'rx="3" fill="#c7e9dd"')}${pixelGrid(features[0],207,84,15)}
-   ${rect(198,159,77,75,'rx="3" fill="#c7e9dd"')}${pixelGrid(features[1],207,168,15)}
-   ${rect(327,111,101,95,'rx="6" fill="#275c50"')}
-   ${text(377,180,'7','text-anchor="middle" style="font-size:62px;fill:#e9fae6"')}
-   ${text(100,260,'MNIST','text-anchor="middle" letter-spacing="1.5"')}
-   ${text(236,260,'CONV','text-anchor="middle" letter-spacing="1.5"')}
-   ${text(378,260,'ARGMAX','text-anchor="middle" letter-spacing="1.5"')}
- </g>`;
-}
-
 export function illustration(type) {
  const uid='vw-'+(++sequence);
  let art='';
@@ -90,7 +69,9 @@ export function illustration(type) {
    const dense=Array.from({length:8},(_,i)=>line(64,93+i*17,186,93+i*17,'opacity="'+(.18+i*.045)+'"')+circle(70+(i*37)%107,93+i*17,2,'fill="currentColor" stroke="none"')).join('');
    art='<g stroke-width="1.1">'+rect(44,67,158,194,'rx="5" fill="#ffffff25"')+rect(280,67,158,194,'rx="5" fill="#ffffff35"')+text(65,91,'MODEL','font-size="9" letter-spacing="1.5"')+'<g transform="translate(0 18)">'+dense+'</g>'+text(300,91,'SIMPLIFY','font-size="9" letter-spacing="1.5"')+'<path d="M298 212 320 129 373 117 420 166 392 225Z" fill="#53673a20"/><path d="M298 212 320 129 373 117 420 166 392 225Z M293 194l129-51 M304 232l114-72" fill="none" stroke-width="1.3"/>'+circle(320,129,5,'fill="currentColor" stroke="none"')+'<path d="M218 162h43m0 0-8-6m8 6-8 6" fill="none" stroke-width="1.6"/>'+text(60,286,'FORMULATION → CONSTRAINTS → COMPUTE','font-size="8" letter-spacing=".9"')+'</g>';
  } else if(type==='network') {
-   art=digitDrawing();
+   let connections='',nodes='';const layers=[3,5,5,2];
+   for(let i=0;i<layers.length;i++){const n=layers[i];for(let j=0;j<n;j++){const x=88+i*100,y=165+(j-(n-1)/2)*39;if(i<layers.length-1){const nn=layers[i+1];for(let k=0;k<nn;k++){connections+=line(x,y,x+100,165+(k-(nn-1)/2)*39,'opacity=".14"');}}nodes+=circle(x,y,8,i===0||i===3?'fill="currentColor" stroke="none"':'fill="#ffffff50" stroke-width="1.3"');}}
+   art=`<g>${connections}${nodes}${text(52,51,'INPUT → HIDDEN → OUTPUT','font-size="9" letter-spacing="1.8"')}<path d="M112 277H365m0 0-7-4m7 4-7 4" fill="none" opacity=".4"/>${text(178,298,'FORWARD PASS','font-size="8" opacity=".6"')}</g>`;
  } else if(type==='grid') {
    let cells='';for(let y=0;y<5;y++)for(let x=0;x<5;x++)cells+=rect(140+x*37,58+y*37,32,32,'rx="3" fill="'+((x===1&&y===1)||(x===3&&y===3)?'#27332b38':'#ffffff20')+'" stroke-width=".7" opacity=".75"');
    art=`<g>${cells}<path d="M156 222v-37h37v-37h74v-74h37" fill="none" stroke-width="2.5"/>${circle(156,222,7,'fill="currentColor" stroke="none"')}<path d="m304 65 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z" fill="currentColor" stroke="none"/>${text(48,113,'STATE','font-size="8" opacity=".6"')}${text(354,186,'ACTION','font-size="8" opacity=".6"')}${text(155,286,'EXPLORE / LEARN','font-size="9" letter-spacing="1.2"')}<path d="M90 120h36m216 61h34" fill="none" opacity=".3"/></g>`;

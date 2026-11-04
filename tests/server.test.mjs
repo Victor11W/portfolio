@@ -7,7 +7,7 @@ server.listen(0,'127.0.0.1');await once(server,'listening');
 const base='http://127.0.0.1:'+server.address().port;
 test.after(()=>new Promise(resolve=>server.close(resolve)));
 test('local pages and scripts use correct MIME types',async()=>{
- for(const [url,mime] of [['/','text/html'],['/app.js','text/javascript'],['/styles.css','text/css'],['/assets/favicon.svg','image/svg+xml'],['/assets/portrait-victor.jpg','image/jpeg'],['/assets/CV_Victor_Woelffel_EN.pdf','application/pdf'],['/assets/Rapport_RISCV_Architecture_Processeur.pdf','application/pdf'],['/assets/Poster_Q_Learning_Chartichaud.pdf','application/pdf'],['/assets/Code_Reconnaissance_Chiffres.zip','application/zip'],['/assets/digit-model.js','text/javascript']]){
+ for(const [url,mime] of [['/','text/html'],['/app.js','text/javascript'],['/styles.css','text/css'],['/assets/favicon.svg','image/svg+xml'],['/assets/CV_Victor_Woelffel_EN.pdf','application/pdf'],['/assets/Rapport_RISCV_Architecture_Processeur.pdf','application/pdf'],['/assets/Poster_Q_Learning_Chartichaud.pdf','application/pdf'],['/assets/Code_Reconnaissance_Chiffres.zip','application/zip'],['/assets/digit-model.js','text/javascript']]){
   const r=await fetch(base+url);assert.equal(r.status,200,url);assert.ok(r.headers.get('content-type').includes(mime));assert.ok((await r.arrayBuffer()).byteLength>0);
  }
 });
@@ -20,5 +20,8 @@ test('server does not expose hidden files or parent directories',async()=>{
 });
 
 test('withdrawn public files are not served',async()=>{
- const response=await fetch(base+'/assets/CV_Victor_Woelffel_FR.pdf');assert.equal(response.status,404);
+ for(const name of ['CV_Victor_Woelffel_FR.pdf','portrait-victor.jpg']){
+  const response=await fetch(base+'/assets/'+name);
+  assert.equal(response.status,404,name);
+ }
 });

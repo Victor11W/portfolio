@@ -6,7 +6,7 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const output=path.join(root,'dist');
 // An explicit dependency order keeps this small build transparent and dependency-free.
 const initial=['content.js','project-utils.js','visuals.js','scene-models.js','digit-engine.js','digit-samples.js','digit-loader.js','neural-scene.js','solid-renderer.js','processor-engine.js','scene.js','app.js'];
-const details=['project-notes.js','digit-lab.js','processor-lab.js','hardware-engines.js','hardware-labs.js','qlearning-engine.js','qlearning-lab.js','project-details.js'];
+const details=['project-notes.js','digit-lab.js','report-cpu.js','processor-lab.js','hardware-engines.js','hardware-labs.js','project-details.js'];
 // File:// cannot import ES modules in all browsers. Build two classic scripts;
 // each module keeps its private scope, and the second reuses the first's engines.
 async function pack(names) {
@@ -48,9 +48,7 @@ await fs.rm(output,{recursive:true,force:true});
 await fs.mkdir(output,{recursive:true});
 await fs.writeFile(path.join(output,'app.bundle.js'),bundle);
 await fs.writeFile(path.join(output,'details.bundle.js'),secondary);
-const detailCSS=await fs.readFile(path.join(root,'project-details.css'),'utf8');
-const qCSS=await fs.readFile(path.join(root,'qlearning.css'),'utf8');
-await fs.writeFile(path.join(output,'project-details.css'),detailCSS.replace("@import './qlearning.css';",()=>qCSS));
+await fs.copyFile(path.join(root,'project-details.css'),path.join(output,'project-details.css'));
 const html=(await fs.readFile(path.join(root,'index.html'),'utf8')).replace('<script type="module" src="./app.js"></script>','<script defer src="./app.bundle.js"></script>');
 await fs.writeFile(path.join(output,'index.html'),html);
 for(const name of ['styles.css','preferences.js'])await fs.copyFile(path.join(root,name),path.join(output,name));

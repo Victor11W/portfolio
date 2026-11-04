@@ -27,8 +27,8 @@ export const ui = {
     intro:'Je suis Victor. Mes projets vont du décodage d’une instruction machine à la reconnaissance d’un chiffre manuscrit. Ici, tu peux essayer les deux.',
     viewProjects:'Explorer mes projets',
     cardActions:{
-      'b-reality':'Découvrir l’étude EEG', processor:'Suivre une instruction', 'stm32-c':'Déclencher une interruption',
-      'q-learning':'Entraîner un agent', optiframe:'Découvrir la monture', 'neural-networks':'Dessiner un chiffre',
+      'b-reality':'Découvrir l’étude EEG', processor:'Faire tourner le processeur', 'stm32-c':'Déclencher une interruption',
+      'q-learning':'Découvrir Chartichaud', optiframe:'Découvrir la monture', 'neural-networks':'Dessiner un chiffre',
       fpga:'Suivre un pixel', 'emerton-optimization':'Voir mon intervention', 'robot-simulator':'Découvrir le simulateur Java'
     },
     processor:'CPU', robot:'Robot', neural:'Réseau IA', illustration:'Illustration interactive', pause:'Mettre l’animation en pause', play:'Reprendre l’animation',
@@ -58,7 +58,7 @@ export const ui = {
     edu2Body:'Robotique, circuits intégrés VLSI, apprentissage par renforcement et systèmes cyberphysiques critiques.',
     edu3Date:'2021 — 2023', edu3Title:'Lycée Marcelin Berthelot', edu3Sub:'Classes préparatoires MP · Saint-Maur-des-Fossés',
     edu3Body:'Mathématiques, physique et informatique.',
-    portraitAlt:'Portrait de Victor Woelffel', aboutLabel:'Un peu plus loin que le code', aboutTitle:'Curieux des systèmes.', aboutAccent:'Et du reste.',
+    aboutLabel:'Un peu plus loin que le code', aboutTitle:'Curieux des systèmes.', aboutAccent:'Et du reste.',
     aboutP1:'Ce qui m’intéresse, c’est le passage d’une idée à un système qui fonctionne. Comprendre une architecture, expérimenter un modèle, confronter le résultat à des contraintes réelles.',
     aboutP2:'À Télécom Paris, puis en échange à Montréal, je construis un parcours à l’intersection de l’IA et de l’embarqué. L’architecture des processeurs, les systèmes critiques et la robotique sont des domaines que j’ai envie d’explorer davantage.',
     toolsTitle:'Ma boîte à outils', toolsNote:'Des outils pratiqués en stage, en cours ou en projet. Les réalisations donnent le contexte.',
@@ -92,8 +92,8 @@ export const ui = {
     intro:'I’m Victor. My projects range from decoding a machine instruction to recognising a handwritten digit. Here you can try both.',
     viewProjects:'Explore my projects',
     cardActions:{
-      'b-reality':'Explore the EEG study', processor:'Follow an instruction', 'stm32-c':'Trigger an interrupt',
-      'q-learning':'Train an agent', optiframe:'Explore the frame design', 'neural-networks':'Draw a digit',
+      'b-reality':'Explore the EEG study', processor:'Run the processor', 'stm32-c':'Trigger an interrupt',
+      'q-learning':'Explore Chartichaud', optiframe:'Explore the frame design', 'neural-networks':'Draw a digit',
       fpga:'Trace a pixel', 'emerton-optimization':'See what I changed', 'robot-simulator':'Explore the Java simulator'
     },
     processor:'CPU', robot:'Robot', neural:'Neural net', illustration:'Interactive illustration', pause:'Pause the animation', play:'Resume the animation',
@@ -123,7 +123,7 @@ export const ui = {
     edu2Body:'Robotics, VLSI integrated circuits, reinforcement learning and safety-critical cyber-physical systems.',
     edu3Date:'2021 — 2023', edu3Title:'Lycée Marcelin Berthelot', edu3Sub:'Preparatory classes, MP · Saint-Maur-des-Fossés',
     edu3Body:'Mathematics, physics and computer science.',
-    portraitAlt:'Portrait of Victor Woelffel', aboutLabel:'A little beyond the code', aboutTitle:'Curious about systems.', aboutAccent:'And everything else.',
+    aboutLabel:'A little beyond the code', aboutTitle:'Curious about systems.', aboutAccent:'And everything else.',
     aboutP1:'I’m drawn to the journey from an idea to a working system. Understanding an architecture, experimenting with a model, and testing the result against real constraints.',
     aboutP2:'At Télécom Paris, and now on exchange in Montréal, I’m building a path across AI and embedded systems. Processor architecture, safety-critical systems and robotics are areas I want to explore further.',
     toolsTitle:'My toolbox', toolsNote:'Tools used during internships, courses and projects. Explore the projects to see how I use them.',
@@ -195,7 +195,7 @@ export const projects = [
  {
   id:'neural-networks',visual:'network',color:'#a4e4e1',category:['ai'],tech:['Python','NumPy','PyTorch','MNIST','CNN','Pygame'],
   title:p('Les neurones, à la main','Neurons, from first principles'),kind:p('Explorations · NumPy & PyTorch','Explorations · NumPy & PyTorch'),
-  short:p('D’un neurone programmé à la main à un CNN entraîné sur MNIST. Dessinez un chiffre pour voir à quels traits réagissent ses filtres.','From a hand-coded neuron to a CNN trained on MNIST. Sketch a digit to see which strokes activate its filters.'),
+  short:p('Du réseau écrit à la main au CNN : reconnaître des chiffres et comprendre ce qui se passe entre les couches.','From a handwritten network to a CNN: recognising digits and understanding what happens between the layers.'),
   context:p('Une exploration des mécanismes d’apprentissage sur les chiffres MNIST, avec une interface de dessin Pygame. Le dossier contient aussi une expérimentation PyTorch de classification binaire d’images de visages, qui prolonge le travail sur les réseaux convolutifs.','An exploration of learning mechanisms using MNIST digits, with a Pygame drawing interface. The folder also contains a PyTorch experiment in binary classification of face images, extending the work on convolutional networks.'),
   steps:p(['Prototype NumPy 784 → 32 → 32 → 10 : propagation, activations sigmoïdes, calcul manuel de dérivées et mise à jour des paramètres.','CNN PyTorch : deux convolutions à 32 puis 64 canaux, ReLU, max-pooling et couches denses 128 → 10. Entraînement prévu avec Adam et une perte d’entropie croisée.','Sauvegarde des poids et interface de dessin. La démo du portfolio exécute le CNN sauvegardé avec une adaptation JavaScript locale ; elle montre l’entrée et quatre cartes d’activation.'],['NumPy prototype, 784 → 32 → 32 → 10: forward passes, sigmoid activations, handwritten derivatives and parameter updates.','PyTorch CNN: two convolutions with 32 then 64 channels, ReLU, max-pooling and 128 → 10 dense layers. The training script uses Adam and cross-entropy loss.','Saved weights and a drawing interface. The portfolio demo runs the saved CNN through a local JavaScript adaptation, showing its input and four activation maps.']),
   learn:p('Passer des opérations élémentaires à une architecture convolutive, puis relier prétraitement, inférence et visualisation. Comprendre aussi qu’un modèle entraîné sur MNIST ne reconnaît pas toujours un dessin libre.','Moving from elementary operations to a convolutional architecture, then connecting preprocessing, inference and visualisation. Also understanding that a model trained on MNIST does not always recognise a freehand drawing.'),

@@ -22,10 +22,10 @@ Ouvrir [l’accueil local](http://127.0.0.1:4173/). Faire défiler la page, puis
 
 | Dossier local | À essayer |
 | --- | --- |
-| [Au cœur du processeur](http://127.0.0.1:4173/#project/processor) | Lire les deux additions qui remplacent un décalage et avancer d’un cycle dans le pipeline. |
-| [Les neurones, à la main](http://127.0.0.1:4173/#project/neural-networks) | Examiner la sigmoïde NumPy, puis dessiner un chiffre pour observer les activations du CNN. |
+| [Au cœur du processeur](http://127.0.0.1:4173/#project/processor) | Suivre l’addition de tableaux du rapport dans le simulateur du processeur. |
+| [Les neurones, à la main](http://127.0.0.1:4173/#project/neural-networks) | Dessiner un chiffre pour observer les activations du CNN et consulter le code d’origine. |
 | [OptiFrame](http://127.0.0.1:4173/#project/optiframe) | Ouvrir le patron SVG imprimable à taille réelle et repérer sa barre de contrôle de 10 mm. |
-| [Apprendre à décider](http://127.0.0.1:4173/#project/q-learning) | Entraîner l’agent sur la grille pédagogique, comparer son premier essai au trajet appris et consulter le poster du projet d’équipe. |
+| [Apprendre à décider](http://127.0.0.1:4173/#project/q-learning) | Découvrir l’environnement multi-agent de Chartichaud et télécharger le poster du projet d’équipe. |
 
 Sous Windows, **Ouvrir_Portfolio.cmd** construit le site puis ouvre la version locale dans le navigateur. Pour construire manuellement, lancer `npm run build`, puis ouvrir `dist/index.html`. Le bundle construit fonctionne directement depuis les fichiers, sans serveur. Le dossier `dist/` est généré localement et n’est pas inclus dans Git.
 
@@ -58,14 +58,13 @@ Les autres vues et projets restent accessibles via les boutons et filtres habitu
 | Fichier | Rôle |
 | --- | --- |
 | `content.js` | Textes français/anglais, projets, compétences et liens |
-| `project-notes.js` | Choix techniques et pièces de référence pour les fiches CPU, chiffres et OptiFrame |
+| `project-notes.js` | Choix techniques et pièces de référence pour les fiches CPU et OptiFrame |
 | `index.html` | Structure sémantique et métadonnées |
 | `styles.css` | Identité visuelle, responsive et thèmes |
 | `app.js` | Navigation, recherche, fiches et scènes |
 | `scene.js` / `solid-renderer.js` | Mise en scène, éclairage, annotations et rendu WebGL avec profondeur |
-| `processor-engine.js` / `processor-lab.js` | ISA personnalisée 16 bits et visite interactive du pipeline |
+| `processor-engine.js` / `report-cpu.js` / `processor-lab.js` | Pipeline de l’accueil et exécution du programme du rapport dans la fiche |
 | `hardware-engines.js` / `hardware-labs.js` | Interruptions STM32 et lecture Avalon vers une FIFO puis l’écran |
-| `qlearning-engine.js` / `qlearning-lab.js` | Apprentissage des valeurs état-action et comparaison des trajets sur une grille |
 | `neural-scene.js` | Vue 2D des activations du CNN |
 | `scene-models.js` | Géométrie du processeur, bras robotisé et cinématique directe |
 | `design/` | Modèles OBJ/MTL importables dans Blender |
@@ -130,7 +129,7 @@ Le portfolio a été mis en ligne le 4 novembre 2026 : **https://perso.telecom-p
 2. Double-cliquer sur **Ouvrir_Portfolio.cmd** pour prévisualiser les modifications localement.
 3. Double-cliquer sur **Publier_Portfolio.cmd** pour publier. Saisir le mot de passe uniquement lorsque la demande SSH du serveur apparaît dans cette fenêtre. Aucun caractère ne s’affiche pendant la saisie. Laisser la fenêtre ouverte jusqu’au résultat final.
 
-Le lanceur contrôle le JavaScript, exécute les tests et construit `dist/`. Il envoie uniquement ce dossier, vérifie l’intégrité de l’archive, sauvegarde le site précédent dans le dossier personnel du serveur, met la nouvelle page en place puis contrôle en HTTPS les fichiers publiés. En cas d’échec de cette dernière vérification, le script restaure la sauvegarde. Les fichiers supplémentaires déjà présents sur le serveur sont conservés, à l’exception de l’ancien CV français : ce document retiré est déplacé dans la sauvegarde privée et son absence publique est vérifiée.
+Le lanceur contrôle le JavaScript, exécute les tests et construit `dist/`. Il envoie uniquement ce dossier, vérifie l’intégrité de l’archive, sauvegarde le site précédent dans le dossier personnel du serveur, met la nouvelle page en place puis contrôle en HTTPS les fichiers publiés. En cas d’échec de cette dernière vérification, le script restaure la sauvegarde. Les fichiers supplémentaires déjà présents sur le serveur sont conservés, à l’exception de l’ancien CV français et du portrait retiré. Le lanceur les déplace dans la sauvegarde privée et contrôle leur retrait en HTTPS.
 
 La même publication est disponible depuis un terminal :
 
@@ -144,7 +143,7 @@ Pour vérifier et préparer une archive sans connexion SSH ni publication :
 npm run deploy -- --dry-run
 ```
 
-Les archives et scripts de préparation restent dans `outputs/deploy-*/`, ignoré par Git. Le nouveau lanceur a été vérifié en mode préparation et son script distant a passé le contrôle syntaxique du shell. La publication initiale a été effectuée et vérifiée séparément via SSH. Le lanceur a ensuite publié avec succès la mise à jour du portrait et de la contribution Emerton, après les 31 tests et une vérification HTTPS des fichiers.
+Les archives et scripts de préparation restent dans `outputs/deploy-*/`, ignoré par Git. Le nouveau lanceur a été vérifié en mode préparation et son script distant a passé le contrôle syntaxique du shell. La publication initiale a été effectuée et vérifiée séparément via SSH.
 
 Le serveur est `perso-vwoelffel-23.lxc.enst.fr`, accessible par `ssh.enst.fr`. Le dossier servi est `/srv/www/vwoelffel-23/`. Aucune installation ni modification d’Apache n’est nécessaire pour publier ce site statique. Les chemins des ressources sont relatifs et les métadonnées de partage utilisent l’URL publique.
 

@@ -32,9 +32,9 @@ Le catalogue compte treize dossiers : onze entrées de projets de la base, une f
 ## Pièces présentées dans les fiches approfondies
 
 - **Processeur.** L’encodage des registres et le format arithmétique sont documentés à la page 17 du rapport de l’équipe. Les deux additions aux adresses 0x22 et 0x24 viennent de la réécriture du programme pour son ISA, page 22. [Rapport, p. 17](../assets/Rapport_RISCV_Architecture_Processeur.pdf#page=17) · [Traduction, p. 22](../assets/Rapport_RISCV_Architecture_Processeur.pdf#page=22)
-- **Chiffres manuscrits.** La fonction `sigmoid` est reproduite depuis `reconnaissance_chiffre.py`, le prototype NumPy. Le CNN PyTorch et ses poids sont ceux utilisés par l’atelier de dessin. [Archive du projet de chiffres](../assets/Code_Reconnaissance_Chiffres.zip) · [Origine et vérification des poids](DIGIT_MODEL.md)
+- **Chiffres manuscrits.** Les poids du CNN PyTorch issus du projet alimentent l’atelier de dessin. [Archive du code](../assets/Code_Reconnaissance_Chiffres.zip) · [Vérification des poids](DIGIT_MODEL.md)
 - **OptiFrame.** L’historique du projet d’équipe documente le travail de Victor sur la calibration métrique (commit `a2cd124`) et la génération du patron de face (commit `3218b82`). Pour le portfolio, l’exporteur d’OptiFrame a traité deux contours synthétiques. Le fichier conserve une barre de contrôle de 10 mm à mesurer après impression à 100 %. [Patron imprimable](../assets/optiframe-frame.svg)
-- **Q-learning.** La grille et le calcul de sa table de valeurs ont été créés pour le portfolio. Les trajets affichés proviennent des essais de cette grille. Le poster de l’équipe décrit séparément Chartichaud et l’expérience sur Pong. [Poster PROJ104](../assets/Poster_Q_Learning_Chartichaud.pdf)
+- **Q-learning.** Le poster du projet documente le jeu de stratégie Chartichaud, l’environnement multi-agent et l’expérience préliminaire sur Pong. [Poster PROJ104](../assets/Poster_Q_Learning_Chartichaud.pdf)
 
 ## Limites préservées
 
@@ -99,7 +99,7 @@ Ces supports expliquent les mécanismes illustrés. Ils ne suffisent pas à attr
 
 ## Pipeline interactif du processeur
 
-Le programme ajouté au portfolio est un exemple pédagogique, distinct du programme complet du rapport. Il utilise MOVI, ADD, STORE et LOAD, avec un pipeline IF / ID / EX, une mémoire de données traitée dans EX et un PC incrémenté de deux octets. Les alias logiques suivent la page 16 ; les codes de registres binaires suivent la table 7, page 17. Les branchements et CALL ne sont pas simulés. Voir PROCESSOR_DEMO.md.
+Le rapport décrit l’encodage personnalisé et le pipeline IF / ID / EX du projet. Le court programme de présentation de l’accueil et l’exécution proposée dans la fiche sont documentés séparément. [Sources et conventions du simulateur](PROCESSOR_DEMO.md)
 
 ## Objectif de présentation
 
@@ -110,7 +110,3 @@ Le programme ajouté au portfolio est un exemple pédagogique, distinct du progr
 Victor a confirmé personnellement le 4 novembre 2026 une réduction de 30 % du temps de calcul grâce à ses simplifications et optimisations. La fiche présente uniquement cette contribution : formulation, contraintes, coût de résolution. L’illustration est un schéma abstrait original ; elle ne révèle pas l’architecture réelle du système.
 
 Le nom, le contexte, le domaine d’application et le fonctionnement du projet sous-jacent ne sont pas publiés. Aucun support interne n’est copié, lié ou inclus dans le build. Les trois missions du stage restent distinctes : analyse de données, agents IA pour des protocoles techniques, optimisation mathématique.
-
-## Portrait
-
-Photographie personnelle fournie directement par Victor le 4 novembre 2026, utilisée avec son accord dans « À propos ». Elle remplace le premier portrait à sa demande. Le fichier JPEG d’origine (1600 × 1200, environ 217 ko) est conservé sans retouche ; le cadrage CSS resserre la vue sur le visage et le buste tout en gardant les chutes en arrière-plan. L’image ne comporte pas de position GPS dans ses données EXIF. Aucun portrait provenant de LinkedIn n’est utilisé.

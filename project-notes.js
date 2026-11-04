@@ -1,12 +1,7 @@
 // Each object describes a documented engineering decision and a small piece of its evidence.
 const shiftExcerpt = `0x22  ADD v3, a3, a3
 0x24  ADD v3, v3, v3`;
-const sigmoidExcerpt = `def sigmoid(x):
-    # Limite les valeurs de x pour éviter l'overflow
-    x_clipped = np.clip(x, -500, 500)
-    return 1 / (1 + np.exp(-x_clipped))`;
 const shiftReport = './assets/Rapport_RISCV_Architecture_Processeur.pdf#page=22';
-const digitArchive = './assets/Code_Reconnaissance_Chiffres.zip';
 const frameTemplate = './assets/optiframe-frame.svg';
 
 export const projectNotes = {
@@ -35,34 +30,6 @@ export const projectNotes = {
         caption: 'The first line doubles the value in a3. The second doubles that result. Together they give the same result as shifting left by two bits.',
         reference: 'Read the translation on page 22 of the report',
         href: shiftReport
-      }
-    }
-  },
-  'neural-networks': {
-    fr: {
-      title: 'Du pixel au premier neurone',
-      role: 'J’ai écrit un réseau en Python et NumPy pour suivre tous les calculs. Dans sa première couche, chaque neurone combine les 784 pixels d’un chiffre avec ses propres poids, ajoute un biais et applique une sigmoïde.',
-      decision: 'Pour mon second modèle, j’ai conservé les pixels sur une grille de 28 × 28. Deux couches de convolution PyTorch y appliquent des filtres de 3 × 3. Le même filtre peut ainsi réagir à un trait en plusieurs endroits du dessin.',
-      result: 'J’ai sauvegardé les poids du CNN et créé une interface de dessin avec Pygame. L’atelier du portfolio réutilise ces poids pour classer un tracé et afficher quatre des cartes calculées dans la première couche.',
-      exhibit: {
-        label: 'Python · prototype NumPy',
-        body: sigmoidExcerpt,
-        caption: 'La sigmoïde transforme la somme pondérée en une activation entre 0 et 1. Borner son entrée évite un dépassement numérique lors du calcul de l’exponentielle.',
-        reference: 'Télécharger le code original · reconnaissance_chiffre.py',
-        href: digitArchive
-      }
-    },
-    en: {
-      title: 'From pixel to first neuron',
-      role: 'I wrote a network in Python and NumPy so I could follow every calculation. In the first layer, each neuron combines the 784 pixels of a digit with its own weights, adds a bias and applies a sigmoid.',
-      decision: 'For my second model, I kept the pixels in a 28 × 28 grid. Two PyTorch convolutional layers apply 3 × 3 filters to it. The same filter can respond to a stroke in several places in the drawing.',
-      result: 'I saved the CNN weights and built a Pygame drawing interface. The portfolio lab uses those weights to classify a sketch and display four of the maps computed in the first layer.',
-      exhibit: {
-        label: 'Python · NumPy prototype',
-        body: sigmoidExcerpt,
-        caption: 'The sigmoid turns a weighted sum into an activation between 0 and 1. Clipping the input keeps the exponential within numerical range.',
-        reference: 'Download the original code · reconnaissance_chiffre.py',
-        href: digitArchive
       }
     }
   },

@@ -53,7 +53,7 @@
         <p class="hero-intro" data-i18n="intro">Je suis Victor. Mes projets vont du décodage d’une instruction machine à la reconnaissance d’un chiffre manuscrit. Ici, tu peux essayer les deux.</p>
         <div class="hero-actions">
           <a class="button button-primary" href="#projects"><span data-i18n="viewProjects">Explorer mes projets</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15m-6-6 6 6 6-6"/></svg></a>
-          <a id="scene-project-link" class="hero-project-link" href="#project/processor" data-project="processor"><span>Suivre une instruction</span><span aria-hidden="true">→</span></a>
+          <a id="scene-project-link" class="hero-project-link" href="#project/processor" data-project="processor"><span>Faire tourner le processeur</span><span aria-hidden="true">→</span></a>
         </div>
       </div>
       <div class="hero-art" id="hero-art" role="group" aria-labelledby="scene-title">
@@ -61,7 +61,9 @@
         <p class="scene-heading" id="scene-title">Une instruction prend vie.</p>
         <canvas class="scene-underlay" id="scene-underlay" aria-hidden="true"></canvas>
         <canvas class="scene-solid" id="scene-solid" aria-hidden="true"></canvas>
-        <canvas id="system-canvas" width="650" height="580" aria-label="Processeur 3D avec ses broches, ses connexions et son cœur de calcul" aria-describedby="scene-description"></canvas>
+        <a id="scene-model-link" class="scene-model-link" href="#project/processor" data-project="processor" aria-label="Ouvrir le processeur 16 bits du rapport">
+          <canvas id="system-canvas" width="650" height="580" aria-label="Processeur 3D avec ses broches, ses connexions et son cœur de calcul" aria-describedby="scene-description"></canvas>
+        </a>
         <div class="art-footer">
           <div class="scene-controls" role="group" aria-label="Choisir une visualisation">
             <button type="button" data-scene="cpu" aria-pressed="true"><span class="scene-dot"></span><span data-i18n="processor">CPU</span></button>
@@ -105,7 +107,6 @@
     <section id="about" class="about-section section-shell section-space" aria-labelledby="about-title">
       <p class="section-index mono"><span>03 /</span> <span data-i18n="aboutLabel">Un peu plus loin que le code</span></p>
       <div class="about-layout"><div class="about-copy"><h2 id="about-title"><span data-i18n="aboutTitle">Curieux des systèmes.</span><br><span class="muted-heading" data-i18n="aboutAccent">Et du reste.</span></h2><p data-i18n="aboutP1">Ce qui m’intéresse, c’est le passage d’une idée à un système qui fonctionne. Comprendre une architecture, expérimenter un modèle, confronter le résultat à des contraintes réelles.</p><p data-i18n="aboutP2">À Télécom Paris, puis en échange à Montréal, je construis un parcours à l’intersection de l’IA et de l’embarqué.</p><p class="languages mono" data-i18n="languages">Français natif · C2 / Anglais · B2.2</p></div>
-      <figure class="about-portrait"><div class="portrait-frame"><img src="./assets/portrait-victor.jpg" alt="Portrait de Victor Woelffel" width="1600" height="1200" loading="lazy" decoding="async"></div><figcaption class="mono">Victor Woelffel<span aria-hidden="true">↗</span></figcaption></figure>
       <div class="toolbox"><div class="toolbox-heading"><span class="tiny-cross" aria-hidden="true">+</span><h3 data-i18n="toolsTitle">Ma boîte à outils</h3></div><div id="skills-list"></div><p class="toolbox-note" data-i18n="toolsNote">Des outils pratiqués en stage, en cours ou en projet. Pas de jauges : les réalisations donnent le contexte.</p></div></div>
       <div class="beyond-grid"><div class="club-card"><p class="mono" data-i18n="clubRole">Vice-président · juin 2024 à juin 2025</p><h3 data-i18n="clubTitle">Télécom Gaming Club</h3><p data-i18n="clubBody">Coordination de 20 membres, organisation de tournois de plus de 100 participants et gestion d’un budget d’environ 8 000 € pour un tournoi public.</p><div class="club-number" aria-hidden="true">20<span>↗</span></div></div><div class="interests-card"><p class="mono" data-i18n="interestsTitle">Hors écran, ou presque</p><div class="interest-list" id="interest-list"></div><svg class="interest-art" viewBox="0 0 190 150" aria-hidden="true"><path d="M30 130 90 20 150 130Z M90 20 110 90 150 130 M30 130 110 90 M55 83l24 12M112 61l-21 15M65 118l18-17" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="110" cy="90" r="6"/><path d="M158 20v22m-11-11h22M22 39v14m-7-7h14"/></svg></div></div>
     </section>

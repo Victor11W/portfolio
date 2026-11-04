@@ -10,7 +10,7 @@ import {projectNotes} from '../project-notes.js';
 const dist=fileURLToPath(new URL('../dist/',import.meta.url));
 const html=await fs.readFile(path.join(dist,'index.html'),'utf8');
 const refs=[...html.matchAll(/\b(?:src|href)="(\.\/[^"]+)"/g)].map(m=>m[1]);
-const resources=new Set([...refs,'./details.bundle.js','./project-details.css','./assets/digit-model.js']);
+const resources=new Set([...refs,'./details.bundle.js','./project-details.css','./assets/digit-model.js','./assets/processor-report-diagram.png']);
 for(const p of projects)for(const link of p.links)if(link.url.startsWith('./'))resources.add(link.url);
 for(const translations of Object.values(projectNotes))for(const n of Object.values(translations)){
  for(const url of [n.exhibit.href,n.exhibit.image])if(url?.startsWith('./'))resources.add(url);

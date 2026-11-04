@@ -94,6 +94,8 @@ h1 {font-size:clamp(66px,7.2vw,112px);letter-spacing:-.065em;line-height:.99;fon
 .hero-art {height:530px;position:relative;align-self:center;min-width:0;border:1px solid var(--line);border-radius:4px;isolation:isolate;background:radial-gradient(ellipse at 50% 50%,color-mix(in srgb,var(--accent) 6%,var(--bg)),transparent 66%);}
 .hero-art::before {content:'';position:absolute;inset:0;z-index:-1;background-image:radial-gradient(var(--soft) .55px,transparent .55px);background-size:20px 20px;opacity:.18;mask-image:linear-gradient(to bottom,#000,transparent 95%);}
 .art-topline {position:absolute;top:20px;left:22px;right:22px;display:flex;justify-content:space-between;color:var(--muted);font-size:9px;}
+.scene-model-link {display:block;width:100%;height:100%;border-radius:inherit;}
+.scene-model-link:focus-visible {outline-offset:-3px;}
 #system-canvas {width:100%;height:100%;touch-action:pan-y;}
 
 .art-footer {position:absolute;left:20px;right:20px;bottom:45px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:15px;gap:12px;}
@@ -411,18 +413,6 @@ dialog::backdrop {background:#080b08b8;backdrop-filter:blur(5px);}
 .project-outcome--compact>strong{font-size:31px;}.project-outcome--compact>div>span{font-size:9px;}
 .experience .project-outcome{max-width:430px;margin-top:20px;}
 @media(max-width:600px){.project-outcome{gap:15px;padding:16px}.project-outcome>strong{font-size:34px}.project-outcome p{font-size:11px}.project-outcome--compact>strong{font-size:29px}}
-
-/* The portrait is framed by layout; its original pixels are preserved. */
-.about-layout{grid-template-columns:minmax(0,1.15fr) minmax(170px,.64fr) minmax(0,1fr);gap:38px;}
-.about-portrait{margin:5px 0 0;width:100%;max-width:230px;justify-self:center;}
-.portrait-frame{position:relative;aspect-ratio:4/5;overflow:hidden;background:#aaa;border:1px solid var(--line);border-radius:3px;}
-.portrait-frame img{position:absolute;width:200%;max-width:none;height:auto;left:-22.5%;top:-12%;}
-.about-portrait figcaption{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);margin-top:12px;padding-top:10px;font-size:9px;color:var(--muted);}
-.about-portrait figcaption span{color:var(--accent);font-size:14px;}
-@media(min-width:951px) and (max-width:1200px){.about-layout{gap:28px;grid-template-columns:minmax(0,1.1fr) minmax(155px,.6fr) minmax(0,1fr)}.about-copy h2{font-size:38px}.toolbox{padding:23px 20px}}
-@media(max-width:950px){.about-layout{grid-template-columns:minmax(0,1fr) 210px;gap:34px}.about-portrait{margin-top:5px}.about-layout .toolbox{grid-column:1/-1;width:100%;margin-top:0}}
-@media(max-width:720px){.about-layout{grid-template-columns:minmax(0,1fr);gap:30px}.about-portrait{width:190px;justify-self:start;margin-top:0}.about-layout .toolbox{grid-column:auto}.about-portrait figcaption{font-size:9px}}
-@media print{.about-layout{grid-template-columns:1fr 145px 1fr;gap:20px}.about-portrait{max-width:145px}.about-layout .toolbox{grid-column:auto}}
 
 .runtime-result{margin:0 0 1.5rem;padding:clamp(1rem,3vw,1.5rem);border:1px solid var(--line);background:var(--surface)}
 .runtime-result figcaption{display:flex;gap:.9rem;align-items:baseline;flex-wrap:wrap}.runtime-result figcaption strong{font:600 2.9rem/1 var(--display);color:var(--accent);letter-spacing:-.05em}

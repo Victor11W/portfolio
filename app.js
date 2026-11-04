@@ -12,7 +12,7 @@ const projectDialog=$('#project-dialog');
 const scene=createScene($('#system-canvas'),{covered:projects.some(p=>location.hash==='#project/'+p.id)});
 scene.setMode(activeScene);
 let activeDetail=null,detailRequest=0;
-const enhancedProjects=new Set(['processor','neural-networks','optiframe','q-learning','stm32-c','fpga']);
+const enhancedProjects=new Set(['processor','neural-networks','optiframe','stm32-c','fpga']);
 const loadProjectDetails=()=>import('./project-details.js');
 const arrow='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14"/></svg>';
 const txt = () => ui[language];
@@ -36,6 +36,10 @@ function updateSceneText() {
  projectLink.href='#project/'+projectId;
  projectLink.dataset.project=projectId;
  projectLink.firstElementChild.textContent=t.cardActions[projectId];
+ const modelLink=$('#scene-model-link');
+ modelLink.href=projectLink.href;
+ modelLink.dataset.project=projectId;
+ modelLink.setAttribute('aria-label',t.cardActions[projectId]);
  $$('button[data-scene]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.scene===activeScene)));
  $('#scene-title').textContent=t[prefix+'Title'];
  $('#scene-description').textContent=t[prefix+'Description'];
@@ -69,7 +73,6 @@ function setText() {
  $('.filter-group').setAttribute('aria-label',language==='fr'?'Filtrer les projets':'Filter projects');
  $('.scene-controls').setAttribute('aria-label',language==='fr'?'Choisir une visualisation':'Choose a visualisation');
  $('.summary-strip').setAttribute('aria-label',language==='fr'?'Quelques repères':'A few highlights');
- $('.about-portrait img').alt=t.portraitAlt;
  $('#cv-download').href='./assets/CV_Victor_Woelffel_EN.pdf';
  $('#cv-download').download='CV_Victor_Woelffel_EN.pdf';
  updateMotionButton();updateSceneText();
@@ -170,7 +173,19 @@ function renderProjectDetail(id) {
  currentProject=id;
  document.title=p.title[language]+' — Victor Woelffel';
  $('#detail-index').textContent=String(index+1).padStart(2,'0')+' / '+String(projects.length).padStart(2,'0')+' — '+t.projectDialog;
- $('#project-detail').innerHTML='<div class="detail-hero '+(enhanced?'detail-hero--compact':'')+'" style="--project-color:'+p.color+'">'+illustration(p.visual)+'<span class="mono">'+esc(t.illustrationNote)+'</span></div><div class="detail-body"><p class="project-meta">'+esc(p.kind[language])+'</p><h2 id="detail-title" tabindex="-1">'+esc(p.title[language])+'</h2><p class="detail-lead">'+esc(p.short[language])+'</p>'+outcomeBlock(p)+tags(p.tech)+(p.links.length?'<div class="detail-links detail-links--intro">'+p.links.map(resourceLink).join('')+'</div>':'')+'<div id="detail-feature"></div><div id="standard-narrative">'+projectNarrative(p,t)+'</div>'+(p.note[language]?'<p class="detail-note"><strong>'+esc(t.limits)+'.</strong> '+esc(p.note[language])+'</p>':'')+'</div>';
+ const genericHero='<div class="detail-hero '+(enhanced?'detail-hero--compact':'')+'" style="--project-color:'+p.color+'">'+illustration(p.visual)+'<span class="mono">'+esc(t.illustrationNote)+'</span></div>';
+ const resources=p.links.length?'<div class="detail-links detail-links--intro">'+p.links.map(resourceLink).join('')+'</div>':'';
+ const feature='<div id="detail-feature"></div>';
+ const narrative='<div id="standard-narrative">'+projectNarrative(p,t)+'</div>';
+ const footnote=p.note[language]?'<p class="detail-note"><strong>'+esc(t.limits)+'.</strong> '+esc(p.note[language])+'</p>':'';
+ const intro='<p class="project-meta">'+esc(p.kind[language])+'</p><h2 id="detail-title" tabindex="-1">'+esc(p.title[language])+'</h2><p class="detail-lead">'+esc(p.short[language])+'</p>';
+ // The processor opens straight onto its working diagram. Supporting documents
+ // and notes follow the lab, while the other dossiers retain their original order.
+ const processor=id==='processor';
+ const contents=processor
+  ? intro+feature+resources+tags(p.tech)+narrative+footnote
+  : intro+outcomeBlock(p)+tags(p.tech)+resources+feature+narrative+footnote;
+ $('#project-detail').innerHTML=(processor?'':genericHero)+'<div class="detail-body">'+contents+'</div>';
  if(enhanced)enhanceProject($('#detail-feature'),id,language,detailRequest);
  projectDialog.scrollTop=0;
 }
