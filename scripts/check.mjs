@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-for(const dir of ['.','scripts']){
+for(const dir of ['.','scripts','scripts/ci']){
  for(const name of await fs.readdir(path.join(root,dir))){
   if(/\.(?:js|mjs)$/.test(name))execFileSync(process.execPath,['--check',path.join(root,dir,name)],{stdio:'inherit'});
  }

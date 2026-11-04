@@ -6,14 +6,14 @@ Portfolio personnel bilingue, conçu autour de l’intelligence artificielle, de
 
 ## Version en ligne et prévisualisation
 
-Pour voir cette proposition sans installer Node, télécharger l’artefact **portfolio-preview** depuis la vérification GitHub de la pull request, extraire le ZIP en entier et ouvrir son fichier `index.html`. Les [mesures et essais de cette version](docs/REVIEW.md) décrivent les différences vérifiées avec la version de référence.
+La version finale est conservée sur la branche `codex/public-portfolio`. Le site public est [victor.woelffel.com](https://victor.woelffel.com/) ; les [vérifications et publications GitHub](https://github.com/Victor11W/portfolio/actions/workflows/verify.yml) indiquent le résultat pour chaque révision.
 
-La version validée `bb85872753eeea30907c713b0e235e88de8493a1`, issue de `codex/portfolio-review`, est publiée sur [victor.woelffel.com](https://victor.woelffel.com/). L’ancienne référence reste disponible dans Git au commit `76c1d99`. [Vérifications GitHub](https://github.com/Victor11W/portfolio/actions/workflows/verify.yml)
+Les [comptes rendus de vérification](docs/REVIEW.md) conservent l’historique des essais. La [documentation du processeur](docs/PROCESSOR_DEMO.md) précise le fonctionnement du rapport et la variante pédagogique avec aléas.
 
 Pour utiliser les sources en local, Node.js 20 ou supérieur est nécessaire (Node 24 est utilisé pour les vérifications). Aucune installation de dépendances npm n’est requise.
 
 ```sh
-git clone --branch codex/portfolio-review https://github.com/Victor11W/portfolio.git
+git clone --branch codex/public-portfolio https://github.com/Victor11W/portfolio.git
 cd portfolio
 npm run dev
 ```
@@ -103,35 +103,48 @@ Les résultats correspondent aux scores du modèle sur le dessin, pas à une mes
 
 ## Git et GitHub
 
-Les sources du portfolio sont disponibles dans [Victor11W/portfolio](https://github.com/Victor11W/portfolio). Le site est hébergé sur VM01 et accessible à [victor.woelffel.com](https://victor.woelffel.com/).
+Les sources du portfolio sont disponibles dans [Victor11W/portfolio](https://github.com/Victor11W/portfolio). Le site est hébergé sur VM01 à l’adresse [victor.woelffel.com](https://victor.woelffel.com/).
 
-La version déployée provient de `codex/portfolio-review`, créée depuis la référence publique `codex/public-portfolio`. Cette dernière conserve la version antérieure `76c1d99`. L’ancien historique de travail reste uniquement en local sur `codex/portfolio`.
+La branche publique est `codex/public-portfolio`. Son historique commence avec un instantané des sources vérifiées, après retrait des documents confidentiels. L’ancien historique de travail est conservé uniquement en local sur `codex/portfolio` ; ne pas publier cette branche historique.
 
 Ce dépôt est distinct du dépôt privé des CV et candidatures. Les sorties de build, les captures de vérification, les secrets et les fichiers temporaires sont ignorés.
 
 Si Git signale une différence de propriétaire sur ce dossier Windows, utiliser `npm run git -- status` (ou toute autre commande Git après `--`). Cette commande fait confiance uniquement à ce dépôt, pour cette invocation, sans modifier les réglages Git globaux.
 
-Pour envoyer une modification sur GitHub depuis cette branche :
+Après avoir enregistré des modifications sur la branche publique :
 
 ```sh
-git push origin codex/portfolio-review
+git push origin codex/public-portfolio
 ```
 
 Envoyer uniquement cette branche. Les options `--all` et `--mirror` ne doivent pas être utilisées : elles incluraient l’historique local qui n’est pas destiné à la publication.
 
-Le workflow GitHub Actions vérifie les sources, lance les tests et construit le site. Il ne publie rien sur l’hébergement SSH.
+Le workflow GitHub Actions vérifie les sources, lance les tests du site et du déploiement, puis construit le site. Sur `codex/public-portfolio`, il publie ensuite le commit vérifié sur VM01. Les autres branches et les pull requests ne déploient pas.
 
 ## Publier et mettre à jour
 
-Le site de production est **https://victor.woelffel.com/**, hébergé sur VM01. La connexion de déploiement est `victor@victor.woelffel.com`. La version `bb85872` a été publiée et vérifiée en HTTPS le 4 novembre 2026.
+Le portfolio est publié sur **https://victor.woelffel.com/**.
 
-Les lanceurs historiques `scripts/deploy.mjs`, `Publier_Portfolio.cmd` et `npm run deploy` ciblent encore l’ancien hébergeur Télécom Paris. **Ne pas les utiliser pour publier ce domaine.** `Ouvrir_Portfolio.cmd` reste utilisable pour la prévisualisation locale.
+1. Modifier les sources de ce dossier. Les textes bilingues sont dans `content.js`, les styles dans `styles.css`, la structure dans `index.html` et les interactions dans `app.js` et les modules associés.
+2. Double-cliquer sur **Ouvrir_Portfolio.cmd** pour prévisualiser les modifications localement.
+3. Enregistrer les modifications voulues sur `codex/public-portfolio`, puis envoyer cette seule branche sur GitHub avec `git push origin codex/public-portfolio`.
 
-Depuis le workspace CVs, suivre `operations/portfolio/runbook-vm01.md`, conservé hors du dépôt public (`../../operations/portfolio/runbook-vm01.md` depuis ce dossier). La procédure vérifie la révision GitHub sélectionnée, construit `dist/`, adapte ses métadonnées au domaine `victor.woelffel.com` puis transfère uniquement les fichiers publics dans une nouvelle version.
+La CI publie uniquement le résultat `dist/`. Les listes de fichiers et SHA-256 sont vérifiés avant la bascule atomique sous verrou. La version précédente est conservée, et une erreur des contrôles HTTPS ou de redirection déclenche le retour arrière. Voir [la configuration et les procédures VM01](docs/VM01_CICD.md).
 
-La publication utilise un verrou et une bascule atomique du lien `current`, sous `/var/www/victor.woelffel.com`. La version précédente reste disponible pour le retour arrière. Les contrôles HTTPS doivent réussir avant d’annoncer la publication. Une mise à jour statique ne nécessite ni sudo ni rechargement nginx.
+Pour préparer localement l’artefact destiné à VM01 :
 
-Les modifications locales et les vérifications GitHub Actions ne déclenchent pas de déploiement. Voir [le compte rendu de publication](docs/REVIEW.md#publication-validée-sur-vm01) pour les versions active et précédente et les contrôles réalisés.
+```sh
+npm run check
+npm test
+npm run build
+node scripts/ci/package.mjs <SHA_COMPLET_DU_COMMIT>
+```
+
+Les artefacts sont générés dans `outputs/ci-package/`, ignoré par Git. Cette préparation seule n’envoie rien sur le serveur. La configuration initiale de l’environnement GitHub et de sa clé dédiée est décrite dans la documentation VM01.
+
+Les anciens `Publier_Portfolio.cmd` et `npm run deploy` ciblent encore l’hébergement Télécom. Ils ne sont pas utilisés pour publier sur VM01.
+
+Pour une publication manuelle ou un retour arrière depuis le workspace CVs, le runbook reste conservé hors du dépôt public : `../../operations/portfolio/runbook-vm01.md`.
 
 ## Direction visuelle
 
