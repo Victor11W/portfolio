@@ -128,11 +128,13 @@ tar -czf "$deployment_stage/previous-web.tar.gz" -C "$web" .
 cp -p "$web/index.html" "$deployment_stage/previous-index.html"
 rollback_needed=1
 trap 'deployment_status=$?; trap - 0; if test "$deployment_status" -ne 0 && test "$rollback_needed" -eq 1; then tar -xzf "$deployment_stage/previous-web.tar.gz" -C "$web"; printf "Version precedente restauree. Sauvegarde : %s/previous-web.tar.gz\n" "$deployment_stage" >&2; fi; exit "$deployment_status"' 0
-# Retire the withdrawn document outside the public root after taking a backup.
-if test -f "$web/assets/CV_Victor_Woelffel_FR.pdf"; then
-  mkdir -p "$deployment_stage/retired/assets"
-  mv "$web/assets/CV_Victor_Woelffel_FR.pdf" "$deployment_stage/retired/assets/CV_Victor_Woelffel_FR.pdf"
-fi
+# Retire withdrawn assets outside the public root after taking a backup.
+for retired in assets/CV_Victor_Woelffel_FR.pdf assets/portrait-victor.jpg; do
+  if test -f "$web/$retired"; then
+    mkdir -p "$deployment_stage/retired/assets"
+    mv "$web/$retired" "$deployment_stage/retired/$retired"
+  fi
+done
 tar -xzf "$deployment_stage/portfolio.tar.gz" -C "$web" --exclude='./index.html' --no-same-owner --no-same-permissions
 next_index=$(mktemp "$web/.index-next.XXXXXX")
 cp "$deployment_stage/site/index.html" "$next_index"
@@ -163,15 +165,15 @@ for source in sorted(release.rglob('*')):
         assert response.status == 200, (relative, response.status)
         assert sha256(response.read()).hexdigest() == expected, ('HTTP content differs', relative)
     checked += 1
-retired = 'assets/CV_Victor_Woelffel_FR.pdf'
-assert not (web / retired).exists(), 'Withdrawn file remains in the public root'
-try:
-    with urlopen(Request(base + retired, headers={'Cache-Control': 'no-cache'}), timeout=20) as response:
-        raise AssertionError('Withdrawn file remains publicly accessible')
-except HTTPError as error:
-    assert error.code in (404, 410), ('Unexpected retired-file status', error.code)
+for retired in ('assets/CV_Victor_Woelffel_FR.pdf', 'assets/portrait-victor.jpg'):
+    assert not (web / retired).exists(), ('Withdrawn file in public root', retired)
+    try:
+        with urlopen(Request(base + retired, headers={'Cache-Control': 'no-cache'}), timeout=20) as response:
+            raise AssertionError(('Withdrawn file publicly accessible', retired))
+    except HTTPError as error:
+        assert error.code in (404, 410), ('Unexpected retired-file status', retired, error.code)
 print('Fichiers publics verifies :', checked, flush=True)
-print('Document retire : inaccessible en HTTPS', flush=True)
+print('Fichiers retires : inaccessibles en HTTPS', flush=True)
 VERIFY_PORTFOLIO
 rollback_needed=0
 trap - 0

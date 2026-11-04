@@ -19,4 +19,12 @@ jobs:
       - run: npm run check
       - run: npm test
       - run: npm run build
-      - run: node --check dist/app.bundle.js
+      - run: node scripts/verify-build.mjs
+      - name: Package the offline preview for review
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          name: portfolio-preview
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30

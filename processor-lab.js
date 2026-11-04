@@ -1,44 +1,276 @@
-import {CPU_PROGRAM,CPU_REGISTERS,createCPUState,advanceCPU} from './processor-engine.js';
+import {CPU_REGISTERS} from './processor-engine.js';
+import {REPORT_PROGRAM,REPORT_LISTING,REPORT_DATA,createReportCPUState,advanceReportCPU} from './report-cpu.js';
+import {processorDiagramMarkup,updateProcessorDiagram,PROCESSOR_VIEW_BOXES} from './processor-diagram.js';
 import {escapeHTML} from './project-utils.js';
-const processorLabText={
- fr:{kicker:'Dans le processeur',title:'Suivez une instruction.',intro:'Un petit programme charge 7 et 5, calcule leur somme, l’écrit en mémoire puis la relit. Avancez d’un cycle pour voir les trois étages travailler ensemble.',play:'Lancer',pause:'Pause',step:'Cycle suivant',reset:'Recommencer',cycle:'Cycle',idle:'Pipeline vide. Lancez le programme ou avancez d’un cycle.',empty:'—',program:'Le programme',registers:'Les 16 registres',memory:'Mémoire de données',binary:'L’instruction décodée',noWord:'L’instruction apparaîtra au premier cycle.',forward:'EX → ID : forwarding',done:'Programme terminé : la valeur 12 est en mémoire et dans a2.',fetch:'PC & mémoire d’instructions',decode:'Décodage & registres',execute:'ALU, mémoire & écriture',note:'Démonstration pédagogique ajoutée au portfolio, d’après l’ISA personnalisée du rapport (p. 16–24). Instructions de 16 bits, PC + 2 ; la mémoire de données est dans EX. Le code binaire suit la table 7 : a0 = 1110, zero = 1111. Valeurs entières réduites à cet exemple, sans modélisation électrique ni des branchements.'},
- en:{kicker:'Inside the processor',title:'Follow an instruction.',intro:'A small program loads 7 and 5, adds them, stores the sum in memory, then reads it back. Advance one cycle to watch the three stages work together.',play:'Run',pause:'Pause',step:'Next cycle',reset:'Restart',cycle:'Cycle',idle:'Pipeline empty. Run the program or advance one cycle.',empty:'—',program:'The program',registers:'The 16 registers',memory:'Data memory',binary:'The decoded instruction',noWord:'An instruction will appear on the first cycle.',forward:'EX → ID: forwarding',done:'Program complete: 12 is stored in memory and in a2.',fetch:'PC & instruction memory',decode:'Decoder & register file',execute:'ALU, memory & writeback',note:'Educational demo added to the portfolio, based on the report’s custom ISA (pp. 16–24). 16-bit instructions, PC + 2; data memory belongs to EX. Binary fields follow table 7: a0 = 1110, zero = 1111. Small integer examples only, without electrical timing or branch modelling.'}
+
+const reportPath='./assets/Rapport_RISCV_Architecture_Processeur.pdf';
+const labels={
+  fr:{
+    kicker:'Architecture du projet · Instructions de 16 bits',title:'Dans notre processeur',
+    intro:'Le chemin de données est redessiné à partir du rapport. Les instructions lisent deux valeurs en mémoire, les additionnent et écrivent le résultat.',
+    run:'Lancer',pause:'Pause',step:'Cycle suivant',restart:'Rejouer',cycle:'Cycle',slider:'Choisir un cycle',
+    idle:'Aucune instruction',fetch:'PC & mémoire d’instructions',decode:'Décodage & registres',execute:'ALU, mémoire & écriture',
+    memory:'Le calcul en mémoire',sample:'Les entrées A et B sont un jeu d’essai. C reçoit leur somme.',
+    trace:'Voir les instructions et les registres',program:'Listing du rapport',registers:'Banc de registres',
+    decoded:'Mot en décodage',reference:'Listing, p. 21 ↗',
+    from:'Point de départ',loop:'L’addition · 0x20',entry:'L’entrée du programme · 0x00',
+    scenario:'Fonctionnement',report:'Programme du rapport',hazards:'Variante pédagogique · aléas',
+    reportNote:'Dans le rapport, le branchement est résolu en ID avant la lecture suivante. Le forwarding EX → ID est utilisé ; aucun flush n’est nécessaire.',
+    hazardsNote:'Variante ajoutée pour observer les aléas : la mémoire devient indisponible pendant un cycle et IF anticipe la lecture séquentielle. Ces hypothèses ne décrivent pas le fonctionnement du rapport.',
+    events:'Voir un événement',forwarding:'Forwarding',stall:'Stall',flush:'Flush',
+    forwardingHint:'Résultat EX → ID',stallHint:'Variante mémoire',flushHint:'Variante avec anticipation',
+    ongoing:'Exécution',before:'Pipeline vide',fill:'Remplissage du pipeline',
+    beforeDetail:'Lancez le programme ou avancez d’un cycle.',fillDetail:'Les premières instructions entrent dans les étages IF, ID et EX.',
+    stallTitle:'La mémoire n’est pas disponible',
+    stallDetail:' attend en ID. Le PC et IF/ID restent figés pendant un cycle ; une bulle traverse EX sans écrire de résultat.',
+    forwardingTitle:'Le résultat d’EX est transmis à ID',
+    forwardingDetail:' arrive directement d’EX pour ',forwardingEnd:' en ID. Cette dépendance ne nécessite pas de stall.',
+    flushTitle:'La lecture anticipée est annulée',
+    flushDetail:' avait été lue à la suite du branchement. Elle est annulée avant ID : la cible ',flushEnd:' sera lue au cycle suivant.',
+    taken:'Branchement pris',notTaken:'Branchement non pris',
+    branchDetail:'La condition testée en ID détermine la prochaine adresse de lecture.',
+    final:'Fin de l’extrait',finalDetail:'Le premier élément de C vaut 12. La cible du dernier branchement est affichée sans exécuter son STORE.',
+    load:'Lecture',store:'Écriture',frozen:'figé',cancelled:'annulée',bubble:'Bulle',noWrite:'Aucune écriture',
+    goal:'L’addition commence à 0x20. La lecture s’arrête au premier retour de boucle, avant d’exécuter le STORE cible une seconde fois.',
+    fromEntry:'Depuis 0x00, le programme teste les pointeurs et construit un masque avant l’addition. À 0x1A, le déplacement est interprété comme −4 selon le commentaire du listing.',
+    branch:'Le déplacement −12 inscrit à 0x3A mène à 0x2E. Le commentaire du listing indique −18, qui mènerait à 0x28. La démo suit l’encodage.',
+    unavailable:'Événement absent de ce parcours.'
+  },
+  en:{
+    kicker:'Project architecture · 16-bit instructions',title:'Inside our processor',
+    intro:'The datapath is redrawn from the report. The instructions read two values from memory, add them and write the result.',
+    run:'Run',pause:'Pause',step:'Next cycle',restart:'Replay',cycle:'Cycle',slider:'Choose a cycle',
+    idle:'No instruction',fetch:'PC & instruction memory',decode:'Decoder & register file',execute:'ALU, memory & writeback',
+    memory:'The calculation in memory',sample:'A and B contain sample inputs. Their sum is written to C.',
+    trace:'Inspect the instructions and registers',program:'Program listing',registers:'Register file',
+    decoded:'Word in decode',reference:'Listing, p. 21 ↗',
+    from:'Start at',loop:'The addition · 0x20',entry:'Program entry · 0x00',
+    scenario:'Behaviour',report:'Program from the report',hazards:'Teaching variant · hazards',
+    reportNote:'In the report, branches are resolved in ID before the next fetch. EX → ID forwarding is used; no flush is needed.',
+    hazardsNote:'Added teaching variant: memory is unavailable for one cycle and IF speculatively reads the next sequential instruction. These assumptions differ from the report’s behaviour.',
+    events:'Inspect an event',forwarding:'Forwarding',stall:'Stall',flush:'Flush',
+    forwardingHint:'EX → ID result',stallHint:'Memory variant',flushHint:'Speculative variant',
+    ongoing:'Execution',before:'Empty pipeline',fill:'Filling the pipeline',
+    beforeDetail:'Run the program or advance one cycle.',fillDetail:'The first instructions are entering IF, ID and EX.',
+    stallTitle:'Memory is not available',
+    stallDetail:' waits in ID. The PC and IF/ID stay frozen for one cycle; a bubble passes through EX without writing a result.',
+    forwardingTitle:'The EX result is forwarded to ID',
+    forwardingDetail:' comes directly from EX for ',forwardingEnd:' in ID. This dependency does not require a stall.',
+    flushTitle:'The speculative fetch is discarded',
+    flushDetail:' was fetched after the branch. It is discarded before ID: the target ',flushEnd:' will be fetched next cycle.',
+    taken:'Branch taken',notTaken:'Branch not taken',
+    branchDetail:'The condition tested in ID selects the next fetch address.',
+    final:'End of the excerpt',finalDetail:'The first element of C is 12. The final branch target is shown without executing its STORE.',
+    load:'Read',store:'Write',frozen:'frozen',cancelled:'discarded',bubble:'Bubble',noWrite:'No writeback',
+    goal:'The addition begins at 0x20. Playback stops at the first loop return, before the target STORE can execute a second time.',
+    fromEntry:'From 0x00, the program checks the pointers and builds a mask before the addition. The displacement at 0x1A is interpreted as −4 following the listing’s comment.',
+    branch:'The −12 displacement at 0x3A targets 0x2E. The listing’s comment says −18, which would target 0x28. This demo follows the encoding.',
+    unavailable:'This path does not contain that event.'
+  }
 };
-const processorDiagram='<svg class="processor-datapath" viewBox="0 0 720 270" aria-hidden="true"><defs><marker id="cpu-lab-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z"/></marker></defs><g class="cpu-stage-zones"><rect x="10" y="15" width="202" height="232" rx="4"/><rect x="246" y="15" width="202" height="232" rx="4"/><rect x="482" y="15" width="228" height="232" rx="4"/></g><g class="cpu-wires"><path class="path-fetch" d="M82 102H112 M200 102H258"/><path class="path-decode" d="M340 102H355 M437 111H510"/><path class="path-immediate" d="M300 130V159H500V181H558"/><path class="path-memory" d="M580 125H610 M695 141V224H395V183"/><path class="path-writeback" d="M554 171V214H382V183"/><path class="path-forward" d="M555 92V39H396V70"/><path d="M52 73V42H165V72"/></g><g class="cpu-latches"><rect x="224" y="62" width="9" height="129"/><rect x="461" y="62" width="9" height="129"/></g><g class="cpu-blocks"><rect class="block-pc" x="24" y="73" width="58" height="58" rx="3"/><rect class="block-imem" x="112" y="73" width="88" height="58" rx="3"/><rect class="block-decode" x="258" y="73" width="82" height="58" rx="3"/><rect class="block-registers" x="355" y="73" width="82" height="110" rx="3"/><rect class="block-immediate" x="264" y="151" width="74" height="41" rx="3"/><path class="block-alu" d="M512 80 580 103 580 152 512 176 512 137 526 128 512 118Z"/><rect class="block-memory" x="611" y="104" width="84" height="61" rx="3"/></g><g class="cpu-diagram-labels"><text x="53" y="96">PC</text><text id="cpu-svg-pc" x="53" y="117">0x00</text><text x="157" y="98">INSTR.</text><text x="157" y="116">MEMORY</text><text x="300" y="106">DECODE</text><text x="396" y="105">REGISTER</text><text x="396" y="122">FILE</text><text x="396" y="148">16 × r</text><text x="301" y="175">IMM</text><text x="550" y="120">ALU</text><text id="cpu-svg-alu" x="550" y="142">—</text><text x="654" y="127">DATA MEM.</text><text id="cpu-svg-memory" x="654" y="148">[0] = 0</text><text x="107" y="35">+ 2</text><text x="228" y="210">IF/ID</text><text x="466" y="210">ID/EX</text><text x="479" y="32">EX → ID</text></g></svg>';
-export function processorLabMarkup(language){
- const t=processorLabText[language],e=escapeHTML;
- return '<section class="processor-lab" aria-labelledby="processor-lab-title"><p class="mono">'+e(t.kicker)+' · ISA 16 BITS</p><h3 id="processor-lab-title">'+e(t.title)+'</h3><p class="processor-lab-intro">'+e(t.intro)+'</p><div class="processor-controls"><button type="button" class="button button-primary" id="processor-play" aria-pressed="false">'+e(t.play)+'</button><button type="button" class="button button-secondary" id="processor-step">'+e(t.step)+'</button><button type="button" class="text-button" id="processor-reset">'+e(t.reset)+'</button><span class="mono" id="processor-cycle">'+e(t.cycle)+' 00</span></div><div class="processor-pipeline">'+[['fetch','IF','Fetch'],['decode','ID','Decode'],['execute','EX','Execute']].map(([key,short,title])=>'<div class="processor-stage" data-cpu-stage="'+key+'"><span class="mono">'+short+' / '+title+'</span><code>—</code><small>'+e(t[key])+'</small></div>').join('')+'</div>'+processorDiagram+'<p id="processor-forward" class="processor-forward" hidden>'+e(t.forward)+'</p><p id="processor-status" class="processor-status" role="status">'+e(t.idle)+'</p><div class="processor-binary"><h4 class="mono">'+e(t.binary)+'</h4><div id="processor-bits"><span>'+e(t.noWord)+'</span></div></div><div class="processor-state-grid"><div><h4 class="mono">'+e(t.program)+'</h4><ol class="processor-program">'+CPU_PROGRAM.map(instruction=>'<li data-cpu-instruction="'+instruction.index+'"><span>0x'+instruction.address.toString(16).padStart(2,'0')+'</span><code>'+e(instruction.assembly)+'</code><b></b></li>').join('')+'</ol><div class="processor-memory"><span>'+e(t.memory)+' · [0x00]</span><strong id="processor-memory-value">0</strong></div></div><div><h4 class="mono">'+e(t.registers)+'</h4><div class="processor-registers">'+CPU_REGISTERS.map((name,index)=>'<div data-cpu-register="'+index+'"><span>r'+index+' / '+name+'</span><strong>0</strong></div>').join('')+'</div></div></div><p class="processor-lab-note">'+e(t.note)+'</p></section>';
+const stages=[['fetch','IF'],['decode','ID'],['execute','EX']];
+
+function hex(value,length=2){
+  return '0x'+value.toString(16).toUpperCase().padStart(length,'0');
 }
+function memorySlots(t){
+  return '<section class="report-memory"><h4>'+t.memory+'</h4><p>'+t.sample+'</p><div class="report-arrays">'+
+    [['A',REPORT_DATA.left],['B',REPORT_DATA.right],['C',REPORT_DATA.dest]].map(([name,address])=>
+      '<div class="report-array" data-address="'+address+'"><div><span>'+name+'[0]</span><small>'+hex(address,3)+
+      '</small></div><output aria-live="off">—</output></div>').join('')+'</div></section>';
+}
+export function processorLabMarkup(language){
+  const t=labels[language];
+  return '<section class="processor-lab" aria-labelledby="processor-lab-title">'+
+    '<p class="report-eyebrow">'+t.kicker+'</p><h3 id="processor-lab-title" class="sr-only">'+t.title+'</h3>'+
+    '<p class="report-intro">'+t.intro+'</p>'+
+    '<div class="report-options">'+
+      '<label class="report-presets"><span>'+t.from+'</span><select id="processor-entry"><option value="loop">'+t.loop+'</option><option value="entry">'+t.entry+'</option></select></label>'+
+      '<label class="report-presets"><span>'+t.scenario+'</span><select id="processor-scenario" aria-describedby="processor-mode-note"><option value="report">'+t.report+'</option><option value="hazards">'+t.hazards+'</option></select></label>'+
+    '</div><p class="report-mode-note" id="processor-mode-note">'+t.reportNote+'</p>'+
+    '<div class="report-controls">'+
+      '<button type="button" class="button button-primary" id="processor-play" aria-pressed="false">'+t.run+'</button>'+
+      '<button type="button" class="button button-secondary" id="processor-step">'+t.step+'</button>'+
+      '<label class="report-scrub"><span id="processor-cycle">'+t.cycle+' 01</span><input type="range" id="processor-clock" min="0" max="1" value="0" step="1" aria-label="'+t.slider+'"></label>'+
+    '</div>'+
+    '<div class="report-event-shortcuts" role="group" aria-label="'+t.events+'">'+
+      ['forwarding','stall','flush'].map(name=>'<button type="button" data-event="'+name+'" aria-pressed="false"><strong>'+t[name]+'</strong><span>'+t[name+'Hint']+'</span></button>').join('')+
+    '</div>'+
+    '<div id="processor-status" class="report-status" role="status"><div class="report-status-heading"><span class="report-event-label"></span><strong class="report-status-title"></strong></div><p class="report-status-detail"></p><p class="report-status-effect"></p></div>'+
+    '<div class="report-stage-grid">'+stages.map(([key,code])=>
+      '<div class="report-stage" data-stage="'+key+'"><div><strong>'+code+'</strong><span>'+t[key]+'</span></div><code>—</code><small></small></div>').join('')+
+    '</div>'+processorDiagramMarkup(language)+memorySlots(t)+
+    '<details class="report-inspector"><summary>'+t.trace+'</summary><div class="report-columns">'+
+      '<div><h4>'+t.program+' <a href="'+reportPath+'#page=21" target="_blank" rel="noopener noreferrer">'+t.reference+'</a></h4><ol class="report-listing"></ol></div>'+
+      '<div><h4>'+t.registers+'</h4><dl class="report-registers">'+CPU_REGISTERS.map((name,i)=>
+        '<div data-register="'+i+'"><dt>r'+i+' · '+name+'</dt><dd>0</dd></div>').join('')+'</dl>'+
+        '<h4>'+t.decoded+'</h4><code id="processor-word" class="report-word">—</code></div>'+
+    '</div></details><p class="report-scope">'+t.goal+'</p></section>';
+}
+function effectDescription(state,t){
+  const effect=state.effect,notes=[];
+  if(effect){
+    const inst=effect.instruction;
+    if(inst.op==='LOAD')notes.push(t.load+' · MEM['+hex(effect.address,3)+'] → '+CPU_REGISTERS[effect.register]+' = '+effect.value);
+    else if(inst.op==='STORE')notes.push(t.store+' · MEM['+hex(effect.address,3)+'] ← '+effect.value);
+    else if(['ADD','SUB','AND','OR'].includes(inst.op)){
+      const op={ADD:'+',SUB:'−',AND:'&',OR:'|'}[inst.op];
+      notes.push(CPU_REGISTERS[effect.register]+' ← '+effect.a+' '+op+' '+effect.b+' = '+effect.value);
+    }else if(effect.register!=null)notes.push(CPU_REGISTERS[effect.register]+' ← '+effect.value);
+  }
+  if(state.forwarding)notes.push('EX → ID · '+CPU_REGISTERS[state.forwarding.register]+' = '+state.forwarding.value);
+  return notes.join('   ·   ');
+}
+function cycleDescription(state,t){
+  if(state.stall)return {event:'stall',title:t.stallTitle,detail:state.stall.instruction.assembly+t.stallDetail};
+  if(state.flush)return {event:'flush',title:t.flushTitle,detail:hex(state.flush.instruction.address)+' · '+state.flush.instruction.assembly+t.flushDetail+hex(state.flush.target)+t.flushEnd};
+  if(state.done)return {event:'done',title:t.final,detail:t.finalDetail+' '+t.branch};
+  if(state.forwarding){
+    const value=CPU_REGISTERS[state.forwarding.register]+' = '+state.forwarding.value;
+    return {event:'forwarding',title:t.forwardingTitle,detail:value+t.forwardingDetail+state.stages.decode.assembly+t.forwardingEnd};
+  }
+  if(state.branch)return {event:'branch',title:state.branch.taken?t.taken+' → '+hex(state.branch.target):t.notTaken,detail:t.branchDetail};
+  if(state.effect)return {event:'execute',title:state.stages.execute.assembly,detail:effectDescription(state,t)};
+  return {event:'fill',title:state.cycle?t.fill:t.before,detail:state.cycle?t.fillDetail:t.beforeDetail};
+}
+
 export function mountProcessorLab(container,language){
- const t=processorLabText[language],e=escapeHTML,controller=new AbortController(),options={signal:controller.signal};let state=createCPUState(),timer=0,running=false;
- const play=container.querySelector('#processor-play'),step=container.querySelector('#processor-step'),diagram=container.querySelector('.processor-datapath');
- function stop(){clearInterval(timer);timer=0;running=false;play.textContent=t.play;play.setAttribute('aria-pressed','false');}
- function statusText(){
-  const effect=state.effect;if(state.done)return t.done;if(!effect)return state.cycle?t.cycle+' '+state.cycle+' · '+(language==='fr'?'Le pipeline se remplit.':'The pipeline is filling.'):t.idle;
-  const {instruction,value,a,b}=effect,op=instruction.op;let message;
-  if(effect.kind==='memory')message=language==='fr'?'Écriture de '+value+' dans mémoire['+effect.address+'].':'Writing '+value+' to memory['+effect.address+'].';
-  else if(op==='MOVI')message=CPU_REGISTERS[effect.register]+' ← '+value;
-  else if(op==='LOAD')message=CPU_REGISTERS[effect.register]+' ← '+(language==='fr'?'mémoire':'memory')+'['+effect.address+'] = '+value;
-  else message=a+' '+({ADD:'+',SUB:'−',AND:'&',OR:'|'}[op])+' '+b+' = '+value+' → '+CPU_REGISTERS[effect.register];
-  return t.cycle+' '+state.cycle+' · '+instruction.assembly+' · '+message;
- }
- function renderState(){
-  container.querySelector('#processor-cycle').textContent=t.cycle+' '+String(state.cycle).padStart(2,'0');
-  for(const [name,instruction] of Object.entries(state.stages)){const element=container.querySelector('[data-cpu-stage="'+name+'"]');element.dataset.active=String(Boolean(instruction));element.querySelector('code').textContent=instruction?.assembly||t.empty;}
-  const selected=state.stages.decode||state.stages.fetch||state.stages.execute;
-  container.querySelector('#processor-bits').innerHTML=selected?selected.fields.map(([name,value])=>'<span class="processor-bit-field" data-field="'+e(name)+'"><code>'+e(value)+'</code><small>'+e(name)+'</small></span>').join(''):'<span>'+e(t.noWord)+'</span>';
-  container.querySelectorAll('[data-cpu-register]').forEach(element=>{const index=Number(element.dataset.cpuRegister);element.querySelector('strong').textContent=state.registers[index];element.classList.toggle('is-written',state.effect?.kind==='register'&&state.effect.register===index);});
-  container.querySelectorAll('[data-cpu-instruction]').forEach(element=>{const index=Number(element.dataset.cpuInstruction),stage=Object.entries(state.stages).find(([,instruction])=>instruction?.index===index)?.[0]||'';element.dataset.stage=stage;element.querySelector('b').textContent=({fetch:'IF',decode:'ID',execute:'EX'})[stage]||'';});
-  container.querySelector('#processor-memory-value').textContent=state.memory[0];container.querySelector('.processor-memory').classList.toggle('is-written',state.effect?.kind==='memory');
-  container.querySelector('#processor-status').textContent=statusText();
-  const forward=container.querySelector('#processor-forward');forward.hidden=!state.forwarding;forward.textContent=t.forward+(state.forwarding?' · '+CPU_REGISTERS[state.forwarding.register]+' = '+state.forwarding.value:'');
-  diagram.dataset.fetch=String(Boolean(state.stages.fetch));diagram.dataset.op=state.effect?.instruction.op||'idle';diagram.dataset.forwarding=String(Boolean(state.forwarding));
-  container.querySelector('#cpu-svg-pc').textContent='0x'+state.registers[15].toString(16).padStart(2,'0');container.querySelector('#cpu-svg-alu').textContent=state.effect?(state.effect.instruction.op==='STORE'||state.effect.instruction.op==='LOAD'?state.effect.a+(state.effect.instruction.imm||0):state.effect.value):'—';container.querySelector('#cpu-svg-memory').textContent='[0] = '+state.memory[0];
-  step.disabled=state.done;
- }
- function advance(){state=advanceCPU(state);renderState();if(state.done)stop();}
- play.addEventListener('click',()=>{if(running){stop();return;}if(state.done){state=createCPUState();renderState();}running=true;play.textContent=t.pause;play.setAttribute('aria-pressed','true');advance();if(!state.done)timer=setInterval(advance,1250);},options);
- step.addEventListener('click',()=>{stop();advance();},options);container.querySelector('#processor-reset').addEventListener('click',()=>{stop();state=createCPUState();renderState();},options);
- document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();},options);
- renderState();return {destroy(){stop();controller.abort();}};
+  const t=labels[language],root=container.querySelector('.processor-lab');
+  const $=selector=>root.querySelector(selector),$$=selector=>[...root.querySelectorAll(selector)];
+  const listeners=new AbortController(),options={signal:listeners.signal};
+  let frames=[],listing=[],index=1,timer=null;
+  const play=$('#processor-play'),step=$('#processor-step'),clock=$('#processor-clock');
+  const entry=$('#processor-entry'),scenario=$('#processor-scenario');
+  const status=$('#processor-status'),figureEl=$('[data-report-figure]');
+  const stagesUI=$$('.report-stage'),cells=$$('.report-array[data-address]'),registers=$$('.report-registers [data-register]');
+  const shortcuts=$$('.report-event-shortcuts [data-event]');
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+
+  function chooseStart(){
+    const hazards=scenario.value==='hazards';
+    frames=[createReportCPUState(entry.value==='entry'?'entry':'body',{hazards})];
+    while(!frames.at(-1).done){
+      if(frames.length>=300)throw new Error('The processor trace did not finish within 300 cycles');
+      frames.push(advanceReportCPU(frames.at(-1)));
+    }
+    index=1;
+    clock.max=String(frames.length-1);
+    const instructions=entry.value==='entry'?REPORT_LISTING:hazards
+      ?[...REPORT_PROGRAM,REPORT_LISTING.find(instruction=>instruction.address===0x3c)]
+      :REPORT_PROGRAM;
+    $('.report-listing').innerHTML=instructions.map(ins=>
+      '<li data-ins="'+ins.address+'"><span>'+hex(ins.address)+'</span><code>'+escapeHTML(ins.assembly)+'</code><b></b></li>').join('');
+    listing=$$('[data-ins]');
+    $('.report-scope').textContent=(entry.value==='entry'?t.fromEntry+' ':'')+t.goal;
+    $('#processor-mode-note').textContent=hazards?t.hazardsNote:t.reportNote;
+    root.dataset.scenario=scenario.value;
+  }
+
+  function render(){
+    const state=frames[index],namedStages=new Map();
+    root.dataset.playing=String(timer!==null);
+    for(const item of stagesUI){
+      const key=item.dataset.stage,instruction=state.stages[key];
+      const cancelled=key==='fetch'?state.flush?.instruction:null;
+      const shown=instruction||cancelled;
+      const frozen=Boolean(state.stall&&key!=='execute');
+      const bubble=Boolean(state.stall&&key==='execute');
+      item.dataset.active=String(Boolean(instruction));
+      item.dataset.hazard=cancelled?'flush':frozen||bubble?'stall':state.forwarding&&key!=='fetch'?'forwarding':'';
+      item.querySelector('code').textContent=shown?.assembly||(bubble?t.bubble:'—');
+      item.querySelector('small').textContent=shown
+        ?hex(shown.address)+(cancelled?' · '+t.cancelled:frozen?' · '+t.frozen:'')
+        :bubble?t.noWrite:t.idle;
+      if(instruction)namedStages.set(instruction.address,key);
+    }
+    if(state.flush)namedStages.set(state.flush.instruction.address,'flush');
+    updateProcessorDiagram(figureEl,state);
+    for(const slot of cells){
+      const address=Number(slot.dataset.address),stored=state.memory[address];
+      slot.querySelector('output').textContent=stored===undefined?'—':String(stored);
+      slot.dataset.access=state.effect?.address===address?state.effect.instruction.op:'';
+    }
+    for(const row of listing){
+      const stage=namedStages.get(Number(row.dataset.ins));
+      row.dataset.stage=stage||'';
+      row.querySelector('b').textContent=stage?{fetch:'IF',decode:'ID',execute:'EX',flush:'×'}[stage]:'';
+    }
+    for(const slot of registers){
+      const i=Number(slot.dataset.register);
+      slot.querySelector('dd').textContent=state.registers[i];
+      slot.dataset.written=String(state.effect?.register===i);
+    }
+    const decoded=state.stages.decode,description=cycleDescription(state,t);
+    $('#processor-word').textContent=decoded?.word!=null?hex(decoded.word,4)+' · '+decoded.bits:'—';
+    $('#processor-cycle').textContent=t.cycle+' '+String(state.cycle).padStart(2,'0');
+    clock.value=String(index);
+    clock.setAttribute('aria-valuetext',t.cycle+' '+state.cycle);
+    status.dataset.event=description.event;
+    status.querySelector('.report-event-label').textContent=t[description.event]||t.ongoing;
+    status.querySelector('.report-status-title').textContent=description.title;
+    status.querySelector('.report-status-detail').textContent=description.detail;
+    const effect=effectDescription(state,t),effectEl=status.querySelector('.report-status-effect');
+    effectEl.textContent=effect;
+    effectEl.hidden=!effect||effect===description.detail;
+    for(const shortcut of shortcuts)shortcut.setAttribute('aria-pressed',String(description.event===shortcut.dataset.event));
+    play.textContent=timer!==null?t.pause:state.done?t.restart:t.run;
+    play.setAttribute('aria-pressed',String(timer!==null));
+    step.disabled=state.done;
+  }
+  function pause(){
+    if(timer!==null)clearInterval(timer);
+    timer=null;
+    status.setAttribute('aria-live','polite');
+  }
+  function advance(){
+    if(index<frames.length-1)index++;
+    if(index===frames.length-1)pause();
+    render();
+  }
+  function start(){
+    if(timer!==null)return;
+    if(index===frames.length-1)index=0;
+    status.setAttribute('aria-live','off');
+    timer=setInterval(advance,1250);
+    render();
+  }
+  function setZoom(next){
+    figureEl.setAttribute('viewBox',PROCESSOR_VIEW_BOXES[next]);
+    figureEl.dataset.zoom=next;
+    for(const option of $$('.report-zoom button'))option.setAttribute('aria-pressed',String(option.dataset.zoom===next));
+  }
+  function changeConfiguration(){
+    const playing=timer!==null;
+    pause();chooseStart();
+    if(playing&&!reduced.matches)start();else render();
+  }
+  play.addEventListener('click',()=>{if(timer===null)start();else{pause();render();}},options);
+  step.addEventListener('click',()=>{pause();advance();},options);
+  clock.addEventListener('input',()=>{pause();index=Number(clock.value);render();},options);
+  entry.addEventListener('change',changeConfiguration,options);
+  scenario.addEventListener('change',changeConfiguration,options);
+  for(const shortcut of shortcuts)shortcut.addEventListener('click',()=>{
+    pause();
+    const event=shortcut.dataset.event;
+    if(event!=='forwarding'&&scenario.value!=='hazards'){
+      scenario.value='hazards';
+      chooseStart();
+    }
+    let found=event==='forwarding'
+      ?frames.findIndex(frame=>frame.forwarding&&frame.stages.decode?.address===0x2c&&frame.effect?.instruction.op==='LOAD')
+      :frames.findIndex(frame=>frame[event]&&(event!=='flush'||frame.branch?.instruction.address===0x3a));
+    if(found<0)found=frames.findIndex(frame=>frame[event]);
+    if(found<0){
+      render();status.querySelector('.report-status-detail').textContent=t.unavailable;return;
+    }
+    index=found;
+    setZoom('all');
+    render();
+  },options);
+  for(const button of $$('.report-zoom button[data-zoom]'))button.addEventListener('click',()=>setZoom(button.dataset.zoom),options);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){pause();render();}},options);
+  reduced.addEventListener('change',()=>{if(reduced.matches){pause();render();}},options);
+  chooseStart();
+  if(!reduced.matches&&!document.hidden)start();else render();
+  return {destroy(){pause();listeners.abort();}};
 }

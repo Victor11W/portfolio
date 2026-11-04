@@ -10,10 +10,18 @@ This repository is the standalone public-facing portfolio source for Victor Woel
 - Before delivery, run npm run check, npm test and npm run build. Inspect affected interactions and layouts in the browser when available.
 - Keep private application databases, inbox exports, offers and credentials outside this repository.
 - The bundled PDF files are copies of existing validated CVs. Do not describe them as newly generated generic CVs. Regenerating CVs requires the original personal database, LaTeX template and validation workflow.
-- Respect the user's requested publication scope. This delivery is local only; do not infer a request to publish from routine design or content edits.
+- Respect the user's requested publication scope. Routine content edits and GitHub pushes do not imply a production deployment.
 
 ## Public Git history
 
 - The public branch is codex/public-portfolio. Its first commit contains an audited snapshot of authorised files.
 - codex/portfolio keeps earlier local work history that includes withdrawn material. Never push that historical branch, --all, or --mirror. Push only the public branch and its future descendants.
-- The public source repository is https://github.com/Victor11W/portfolio. The live website continues to use the existing authorised SSH hosting.
+- The public source repository is https://github.com/Victor11W/portfolio.
+
+## Production hosting
+
+- The production website is https://victor.woelffel.com, hosted on VM01. The validated revision bb85872753eeea30907c713b0e235e88de8493a1 from codex/portfolio-review was deployed on 4 November 2026; codex/public-portfolio retains the earlier reference.
+- The deployment SSH target is victor@victor.woelffel.com. Do not substitute the former Télécom Paris hosting.
+- scripts/deploy.mjs, Publier_Portfolio.cmd and npm run deploy still target the former Télécom Paris host. Do not use them to publish this domain.
+- For maintenance from the CVs workspace, follow ../../operations/portfolio/runbook-vm01.md. Keep that operational runbook outside the public repository.
+- Publish only the explicitly selected public Git revision and its dist/ output. Use the VM01 release directory, deployment lock, atomic current-link switch, HTTPS verification and rollback procedure. Do not modify nginx, certificates or other sites for a static update.

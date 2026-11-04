@@ -9,6 +9,8 @@
 - Aucun contenu LinkedIn n’a été extrait : la page n’était pas accessible par l’outil de lecture. Le site n’utilise aucune photo ni image issue de LinkedIn.
 - Les deux sites de référence ont été consultés pour la direction visuelle. Aucun code, texte de présentation ou image n’en a été copié.
 
+Les textes de motivation de l’accueil et de la section À propos reprennent les précisions de Victor du 4 novembre 2026 : intérêt pour l’architecture CPU et le bas niveau, plaisir de comprendre les algorithmes en détail et souhait de contribuer à des projets de robotique à grande échelle grâce aux progrès de l’IA. Ces souhaits ne décrivent pas des réalisations déjà accomplies.
+
 ## Correspondance des dossiers
 
 | ID | Source personnelle |
@@ -28,6 +30,13 @@
 | raspberry-car | §6.10 |
 
 Le catalogue compte treize dossiers : onze entrées de projets de la base, une fiche de recherche professionnelle et une fiche limitée à la contribution de Victor en optimisation chez Emerton Data. L’entrée réseaux de neurones regroupe deux réalisations. Ce décompte ne désigne pas treize projets indépendants attribués à Victor seul.
+
+## Pièces présentées dans les fiches approfondies
+
+- **Processeur.** L’encodage des registres et le format arithmétique sont documentés à la page 17 du rapport de l’équipe. Les deux additions aux adresses 0x22 et 0x24 viennent de la réécriture du programme pour son ISA, page 22. [Rapport, p. 17](../assets/Rapport_RISCV_Architecture_Processeur.pdf#page=17) · [Traduction, p. 22](../assets/Rapport_RISCV_Architecture_Processeur.pdf#page=22)
+- **Chiffres manuscrits.** Les poids du CNN PyTorch issus du projet alimentent l’atelier de dessin. [Archive du code](../assets/Code_Reconnaissance_Chiffres.zip) · [Vérification des poids](DIGIT_MODEL.md)
+- **OptiFrame.** L’historique du projet d’équipe documente le travail de Victor sur la calibration métrique (commit `a2cd124`) et la génération du patron de face (commit `3218b82`). Pour le portfolio, l’exporteur d’OptiFrame a traité deux contours synthétiques. Le fichier conserve une barre de contrôle de 10 mm à mesurer après impression à 100 %. [Patron imprimable](../assets/optiframe-frame.svg)
+- **Q-learning.** Le poster du projet documente le jeu de stratégie Chartichaud, l’environnement multi-agent et l’expérience préliminaire sur Pong. [Poster PROJ104](../assets/Poster_Q_Learning_Chartichaud.pdf)
 
 ## Limites préservées
 
@@ -52,7 +61,7 @@ Un essai antérieur de génération de CV génériques n’avait pas passé la c
 
 ## Liens externes
 
-Les URL LinkedIn, GitHub/OptiFrame, démo et DOI proviennent des données documentées. Leur disponibilité publique n’a pas pu être confirmée par l’outil web utilisé pendant la session. Aucun accès public au code OptiFrame n’est affirmé. Un contrôle dans le compte habituel de Victor sera utile avant publication.
+Les adresses LinkedIn, de démonstration OptiFrame et de publication IEEE proviennent des données documentées. Le dépôt de code OptiFrame renvoie une réponse 404 lors de la vérification publique. La fiche renvoie à la démonstration et fournit le patron SVG directement.
 
 ## Données locales
 
@@ -92,7 +101,7 @@ Ces supports expliquent les mécanismes illustrés. Ils ne suffisent pas à attr
 
 ## Pipeline interactif du processeur
 
-Le programme ajouté au portfolio est un exemple pédagogique, distinct du programme complet du rapport. Il utilise MOVI, ADD, STORE et LOAD, avec un pipeline IF / ID / EX, une mémoire de données traitée dans EX et un PC incrémenté de deux octets. Les alias logiques suivent la page 16 ; les codes de registres binaires suivent la table 7, page 17. Les branchements et CALL ne sont pas simulés. Voir PROCESSOR_DEMO.md.
+Le rapport décrit l’encodage personnalisé et le pipeline IF / ID / EX du projet. Le court programme de présentation de l’accueil et l’exécution proposée dans la fiche sont documentés séparément. [Sources et conventions du simulateur](PROCESSOR_DEMO.md)
 
 ## Objectif de présentation
 
@@ -103,7 +112,3 @@ Le programme ajouté au portfolio est un exemple pédagogique, distinct du progr
 Victor a confirmé personnellement le 4 novembre 2026 une réduction de 30 % du temps de calcul grâce à ses simplifications et optimisations. La fiche présente uniquement cette contribution : formulation, contraintes, coût de résolution. L’illustration est un schéma abstrait original ; elle ne révèle pas l’architecture réelle du système.
 
 Le nom, le contexte, le domaine d’application et le fonctionnement du projet sous-jacent ne sont pas publiés. Aucun support interne n’est copié, lié ou inclus dans le build. Les trois missions du stage restent distinctes : analyse de données, agents IA pour des protocoles techniques, optimisation mathématique.
-
-## Portrait
-
-Photographie personnelle fournie directement par Victor le 4 novembre 2026, utilisée avec son accord dans « À propos ». Elle remplace le premier portrait à sa demande. Le fichier JPEG d’origine (1600 × 1200, environ 217 ko) est conservé sans retouche ; le cadrage CSS resserre la vue sur le visage et le buste tout en gardant les chutes en arrière-plan. L’image ne comporte pas de position GPS dans ses données EXIF. Aucun portrait provenant de LinkedIn n’est utilisé.

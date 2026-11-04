@@ -1,22 +1,31 @@
-# Victor Woelffel — Du signal au système
+# Victor Woelffel — Projets en IA et systèmes embarqués
 
 Portfolio personnel bilingue, conçu autour de l’intelligence artificielle, des systèmes embarqués et de la robotique.
 
-![Aperçu du portfolio](docs/preview.jpg)
+![Accueil du portfolio avec le processeur interactif](docs/preview.jpg)
 
-## Ouvrir le site
+## Version en ligne et prévisualisation
 
-**[Voir le portfolio en ligne](https://perso.telecom-paristech.fr/vwoelffel-23/)** · [Vérifications automatiques](https://github.com/Victor11W/portfolio/actions/workflows/verify.yml)
+Pour voir cette proposition sans installer Node, télécharger l’artefact **portfolio-preview** depuis la vérification GitHub de la pull request, extraire le ZIP en entier et ouvrir son fichier `index.html`. Les [mesures et essais de cette version](docs/REVIEW.md) décrivent les différences vérifiées avec la version de référence.
+
+La version validée `bb85872753eeea30907c713b0e235e88de8493a1`, issue de `codex/portfolio-review`, est publiée sur [victor.woelffel.com](https://victor.woelffel.com/). L’ancienne référence reste disponible dans Git au commit `76c1d99`. [Vérifications GitHub](https://github.com/Victor11W/portfolio/actions/workflows/verify.yml)
 
 Pour utiliser les sources en local, Node.js 20 ou supérieur est nécessaire (Node 24 est utilisé pour les vérifications). Aucune installation de dépendances npm n’est requise.
 
 ```sh
-git clone https://github.com/Victor11W/portfolio.git
+git clone --branch codex/portfolio-review https://github.com/Victor11W/portfolio.git
 cd portfolio
 npm run dev
 ```
 
-Ouvrir l’adresse affichée : [http://127.0.0.1:4173](http://127.0.0.1:4173). Arrêter le serveur avec Ctrl+C.
+Ouvrir [l’accueil local](http://127.0.0.1:4173/). Faire défiler la page, puis essayer les quatre dossiers ci-dessous. Arrêter le serveur avec Ctrl+C.
+
+| Dossier local | À essayer |
+| --- | --- |
+| [Au cœur du processeur](http://127.0.0.1:4173/#project/processor) | Suivre l’addition de tableaux du rapport dans le simulateur du processeur. |
+| [Les neurones, à la main](http://127.0.0.1:4173/#project/neural-networks) | Dessiner un chiffre pour observer les activations du CNN et consulter le code d’origine. |
+| [OptiFrame](http://127.0.0.1:4173/#project/optiframe) | Ouvrir le patron SVG imprimable à taille réelle et repérer sa barre de contrôle de 10 mm. |
+| [Apprendre à décider](http://127.0.0.1:4173/#project/q-learning) | Découvrir l’environnement multi-agent de Chartichaud et télécharger le poster du projet d’équipe. |
 
 Sous Windows, **Ouvrir_Portfolio.cmd** construit le site puis ouvre la version locale dans le navigateur. Pour construire manuellement, lancer `npm run build`, puis ouvrir `dist/index.html`. Le bundle construit fonctionne directement depuis les fichiers, sans serveur. Le dossier `dist/` est généré localement et n’est pas inclus dans Git.
 
@@ -27,7 +36,7 @@ Sous Windows, **Ouvrir_Portfolio.cmd** construit le site puis ouvre la version l
 - Filtres par domaine et recherche tolérant les accents et les ligatures.
 - Deux stages, formation, publication scientifique, association et centres d’intérêt.
 - Français et anglais, thème sombre et thème clair.
-- Navigation qui s’efface en descendant et réapparaît en remontant, animations désactivables et réduction des mouvements respectée.
+- Navigation intégrée au début de la page. Sur mobile, l’ouverture du menu décale le contenu vers le bas. Les animations peuvent être mises en pause et respectent la préférence de réduction des mouvements.
 - Illustrations SVG originales et deux scènes 3D : processeur avec pipeline et bras robotisé qui empile trois cubes, plus un réseau neuronal en 2D.
 - CV anglais existant et validé, accessible depuis les deux langues du site.
 - Rapport d’architecture RISC-V et poster Q-learning téléchargeables depuis leurs fiches.
@@ -49,11 +58,12 @@ Les autres vues et projets restent accessibles via les boutons et filtres habitu
 | Fichier | Rôle |
 | --- | --- |
 | `content.js` | Textes français/anglais, projets, compétences et liens |
+| `project-notes.js` | Choix techniques et pièces de référence pour les fiches CPU et OptiFrame |
 | `index.html` | Structure sémantique et métadonnées |
 | `styles.css` | Identité visuelle, responsive et thèmes |
 | `app.js` | Navigation, recherche, fiches et scènes |
 | `scene.js` / `solid-renderer.js` | Mise en scène, éclairage, annotations et rendu WebGL avec profondeur |
-| `processor-engine.js` / `processor-lab.js` | ISA personnalisée 16 bits et visite interactive du pipeline |
+| `processor-engine.js` / `report-cpu.js` / `processor-lab.js` | Pipeline de l’accueil et exécution du programme du rapport dans la fiche |
 | `hardware-engines.js` / `hardware-labs.js` | Interruptions STM32 et lecture Avalon vers une FIFO puis l’écran |
 | `neural-scene.js` | Vue 2D des activations du CNN |
 | `scene-models.js` | Géométrie du processeur, bras robotisé et cinématique directe |
@@ -75,7 +85,7 @@ npm run build
 npm run preview
 ```
 
-Le build rassemble les modules dans un script classique pour permettre l’ouverture de `dist/index.html` depuis le disque. Le serveur est limité à la boucle locale. Les fichiers cachés et les chemins sortant du dossier servi sont refusés.
+Le build produit deux scripts classiques compatibles avec l’ouverture de `dist/index.html` depuis le disque. La page charge les scènes et l’index à l’arrivée, puis le code et les styles des ateliers à la première ouverture d’une fiche enrichie. Le serveur est limité à la boucle locale. Les fichiers cachés et les chemins sortant du dossier servi sont refusés.
 
 Les préférences de langue et de thème sont mémorisées dans le stockage local du navigateur. Le site continue à fonctionner lorsque ce stockage est indisponible.
 
@@ -87,24 +97,24 @@ Les géométries se régénèrent pour Blender avec `npm run export-models`. Voi
 
 ## Démo de reconnaissance de chiffres
 
-La fiche `#project/neural-networks` charge les poids du CNN seulement à son ouverture. Le réseau s’exécute localement en JavaScript, sans serveur d’inférence, sans compte et sans transmission du dessin. Le modèle comporte 225 034 paramètres. Le prototype NumPy et l’interface Pygame d’origine restent accessibles dans l’archive de code.
+Les poids du CNN se chargent à la demande quand la scène « Réseau IA » ou l’atelier de dessin en a besoin. Le réseau s’exécute localement en JavaScript, sans serveur d’inférence, sans compte et sans transmission du dessin. Le modèle comporte 225 034 paramètres. Le prototype NumPy et l’interface Pygame d’origine restent accessibles dans l’archive de code.
 
 Les résultats correspondent aux scores du modèle sur le dessin, pas à une mesure de précision. Voir [les notes du modèle](docs/DIGIT_MODEL.md) pour l’origine des poids, le prétraitement adapté et la vérification numérique.
 
 ## Git et GitHub
 
-Les sources du portfolio sont disponibles dans [Victor11W/portfolio](https://github.com/Victor11W/portfolio). Le site est hébergé sur [Télécom Paris](https://perso.telecom-paristech.fr/vwoelffel-23/).
+Les sources du portfolio sont disponibles dans [Victor11W/portfolio](https://github.com/Victor11W/portfolio). Le site est hébergé sur VM01 et accessible à [victor.woelffel.com](https://victor.woelffel.com/).
 
-La branche publique est `codex/public-portfolio`. Son historique commence avec un instantané des sources vérifiées, après retrait des documents confidentiels. L’ancien historique de travail est conservé uniquement en local sur `codex/portfolio` ; ne pas publier cette branche historique.
+La version déployée provient de `codex/portfolio-review`, créée depuis la référence publique `codex/public-portfolio`. Cette dernière conserve la version antérieure `76c1d99`. L’ancien historique de travail reste uniquement en local sur `codex/portfolio`.
 
 Ce dépôt est distinct du dépôt privé des CV et candidatures. Les sorties de build, les captures de vérification, les secrets et les fichiers temporaires sont ignorés.
 
 Si Git signale une différence de propriétaire sur ce dossier Windows, utiliser `npm run git -- status` (ou toute autre commande Git après `--`). Cette commande fait confiance uniquement à ce dépôt, pour cette invocation, sans modifier les réglages Git globaux.
 
-Après avoir enregistré des modifications sur la branche publique :
+Pour envoyer une modification sur GitHub depuis cette branche :
 
 ```sh
-git push origin codex/public-portfolio
+git push origin codex/portfolio-review
 ```
 
 Envoyer uniquement cette branche. Les options `--all` et `--mirror` ne doivent pas être utilisées : elles incluraient l’historique local qui n’est pas destiné à la publication.
@@ -113,35 +123,15 @@ Le workflow GitHub Actions vérifie les sources, lance les tests et construit le
 
 ## Publier et mettre à jour
 
-Le portfolio a été mis en ligne le 4 novembre 2026 : **https://perso.telecom-paristech.fr/vwoelffel-23/**. L’adresse avec `perso.telecom-paris.fr` redirige vers celle-ci.
+Le site de production est **https://victor.woelffel.com/**, hébergé sur VM01. La connexion de déploiement est `victor@victor.woelffel.com`. La version `bb85872` a été publiée et vérifiée en HTTPS le 4 novembre 2026.
 
-1. Modifier les sources de ce dossier. Les textes bilingues sont dans `content.js`, les styles dans `styles.css`, la structure dans `index.html` et les interactions dans `app.js` et les modules associés.
-2. Double-cliquer sur **Ouvrir_Portfolio.cmd** pour prévisualiser les modifications localement.
-3. Double-cliquer sur **Publier_Portfolio.cmd** pour publier. Saisir le mot de passe uniquement lorsque la demande SSH du serveur apparaît dans cette fenêtre. Aucun caractère ne s’affiche pendant la saisie. Laisser la fenêtre ouverte jusqu’au résultat final.
+Les lanceurs historiques `scripts/deploy.mjs`, `Publier_Portfolio.cmd` et `npm run deploy` ciblent encore l’ancien hébergeur Télécom Paris. **Ne pas les utiliser pour publier ce domaine.** `Ouvrir_Portfolio.cmd` reste utilisable pour la prévisualisation locale.
 
-Le lanceur contrôle le JavaScript, exécute les tests et construit `dist/`. Il envoie uniquement ce dossier, vérifie l’intégrité de l’archive, sauvegarde le site précédent dans le dossier personnel du serveur, met la nouvelle page en place puis contrôle en HTTPS les fichiers publiés. En cas d’échec de cette dernière vérification, le script restaure la sauvegarde. Les fichiers supplémentaires déjà présents sur le serveur sont conservés, à l’exception de l’ancien CV français : ce document retiré est déplacé dans la sauvegarde privée et son absence publique est vérifiée.
+Depuis le workspace CVs, suivre `operations/portfolio/runbook-vm01.md`, conservé hors du dépôt public (`../../operations/portfolio/runbook-vm01.md` depuis ce dossier). La procédure vérifie la révision GitHub sélectionnée, construit `dist/`, adapte ses métadonnées au domaine `victor.woelffel.com` puis transfère uniquement les fichiers publics dans une nouvelle version.
 
-La même publication est disponible depuis un terminal :
+La publication utilise un verrou et une bascule atomique du lien `current`, sous `/var/www/victor.woelffel.com`. La version précédente reste disponible pour le retour arrière. Les contrôles HTTPS doivent réussir avant d’annoncer la publication. Une mise à jour statique ne nécessite ni sudo ni rechargement nginx.
 
-```sh
-npm run deploy
-```
-
-Pour vérifier et préparer une archive sans connexion SSH ni publication :
-
-```sh
-npm run deploy -- --dry-run
-```
-
-Les archives et scripts de préparation restent dans `outputs/deploy-*/`, ignoré par Git. Le nouveau lanceur a été vérifié en mode préparation et son script distant a passé le contrôle syntaxique du shell. La publication initiale a été effectuée et vérifiée séparément via SSH. Le lanceur a ensuite publié avec succès la mise à jour du portrait et de la contribution Emerton, après les 31 tests et une vérification HTTPS des fichiers.
-
-Le serveur est `perso-vwoelffel-23.lxc.enst.fr`, accessible par `ssh.enst.fr`. Le dossier servi est `/srv/www/vwoelffel-23/`. Aucune installation ni modification d’Apache n’est nécessaire pour publier ce site statique. Les chemins des ressources sont relatifs et les métadonnées de partage utilisent l’URL publique.
-
-```sh
-ssh -J vwoelffel-23@ssh.enst.fr vwoelffel-23@perso-vwoelffel-23.lxc.enst.fr
-```
-
-La sauvegarde de la page initiale « site en construction » est conservée sur le serveur dans `/home/vwoelffel-23/.local/share/portfolio-deployments/2026-11-04.aF4XcL/previous-web.tar.gz`. Les publications suivantes affichent le chemin de leur propre sauvegarde. Le déploiement n’est pas déclenché automatiquement par les modifications locales ou par GitHub Actions : lancer la publication pour chaque nouvelle version à mettre en ligne.
+Les modifications locales et les vérifications GitHub Actions ne déclenchent pas de déploiement. Voir [le compte rendu de publication](docs/REVIEW.md#publication-validée-sur-vm01) pour les versions active et précédente et les contrôles réalisés.
 
 ## Direction visuelle
 

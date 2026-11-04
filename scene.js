@@ -4,20 +4,16 @@ import {createSolidRenderer} from './solid-renderer.js';
 import {cpuTimeline,CPU_REGISTERS} from './processor-engine.js';
 
 // Original CPU, pick-and-place robot and a view of the real digit CNN.
-export function createScene(canvas) {
+export function createScene(canvas,{covered=false}={}) {
  let ctx=canvas.getContext('2d');
  const overlayContext=ctx,floorCanvas=document.getElementById('scene-underlay'),floorContext=floorCanvas.getContext('2d');
  const solid=createSolidRenderer(document.getElementById('scene-solid'));
  const onFloor=callback=>{ctx=floorContext;try{return callback();}finally{ctx=overlayContext;}};
- if(!ctx)return {setMode(){},setLanguage(){},toggle(){return true;},get paused(){return true;}};
+ if(!ctx||!floorContext)return {setMode(){},setLanguage(){},setCovered(){},toggle(){return true;},get paused(){return true;}};
  const cpu=createProcessorModel(),cpuFrames=cpuTimeline();
  const neural=createNeuralScene(ctx,()=>draw());
- const reduced=matchMedia('(prefers-reduced-motion: reduce)');
- let mode='cpu',language='fr',paused=reduced.matches,visible=true,frame=0,age=0,last=0,width=0,height=0,targetX=0,targetY=0,panX=0,panY=0;
- const labels={
-  fr:{core:'CŒUR DE CALCUL',ports:'CONNEXIONS',joints:'ARTICULATIONS',gripper:'PINCE'},
-  en:{core:'COMPUTE CORE',ports:'CONNECTIONS',joints:'JOINTS',gripper:'GRIPPER'}
- };
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)'),coarse=matchMedia('(pointer: coarse)');
+ let mode='cpu',language='fr',paused=reduced.matches,visible=true,frame=0,age=0,last=0,nextDraw=0,width=0,height=0,targetX=0,targetY=0,panX=0,panY=0;
  const palettes={
   dark:{board:[31,48,34],body:[32,38,30],cap:[49,58,43],die:[61,84,44],core:[78,107,51],coreAccent:[156,193,96],metal:[148,164,126],gold:[172,184,112],cargoGold:[224,183,106],cargoMint:[133,207,187],stageFetch:[119,207,193],stageDecode:[222,192,103],stageExecute:[191,229,130]},
   light:{board:[192,207,169],body:[41,49,37],cap:[62,72,50],die:[84,111,51],core:[111,143,68],coreAccent:[180,210,120],metal:[138,154,113],gold:[151,160,87],cargoGold:[209,155,65],cargoMint:[78,161,143],stageFetch:[57,150,133],stageDecode:[186,150,55],stageExecute:[117,159,58]}
@@ -62,7 +58,8 @@ export function createScene(canvas) {
   });
  }
  function paintCPU(){
-  const cpuFrame=cpuFrames[Math.min(cpuFrames.length-1,Math.floor(age/1.7)%(cpuFrames.length+2))],stageNames=['fetch','decode','execute'];
+  // Open on a real, populated cycle. The step-by-step lab still starts empty.
+  const cpuFrame=cpuFrames[Math.min(cpuFrames.length-1,(3+Math.floor(age/1.7))%(cpuFrames.length+2))],stageNames=['fetch','decode','execute'];
   const cpuFaces=cpu.faces.map(face=>{const index=Number(face.role?.replace('stage',''));return face.role?.startsWith('stage')?{...face,material:cpuFrame.stages[stageNames[index]]?['stageFetch','stageDecode','stageExecute'][index]:'core'}:face;});
   const fit=sceneProjection(cpu.vertices,width,height,{mode,panX,panY,time:age}),{project,points,scale}=fit;
   onFloor(()=>shadow(project,scale));
@@ -93,10 +90,10 @@ export function createScene(canvas) {
   stageNames.forEach((name,index)=>{
    const instruction=cpuFrame.stages[name],x=22+index*(boxWidth+gap),color=pipelineColors[index];
    ctx.fillStyle=light()?'rgba(243,242,235,.88)':'rgba(16,22,16,.88)';ctx.strokeStyle=rgba(instruction?color:accent(),instruction?.7:.22);ctx.lineWidth=.8;ctx.fillRect(x,y,boxWidth,43);ctx.strokeRect(x,y,boxWidth,43);
-   text(['01 / FETCH','02 / DECODE','03 / EXECUTE'][index],x+7,y+12,rgba(instruction?color:accent(),.85),width<400?6.5:7.5);
+   text(['01 / FETCH','02 / DECODE','03 / EXECUTE'][index],x+6,y+13,rgba(instruction?color:accent(),.98),width<360?7.5:width<420?8:9);
    const short=instruction?(instruction.op+(instruction.rd!==null&&instruction.rd!==undefined?' '+CPU_REGISTERS[instruction.rd]:instruction.op==='STORE'?' '+CPU_REGISTERS[instruction.rs2]:'')):'—';
    const readable=instruction?(width<400?instruction.assembly.replaceAll('zero','0').replaceAll(', ',','):instruction.assembly):short;
-   text(readable,x+7,y+31,rgba(accent(),instruction?1:.45),width<300?7:width<400?8.5:10);
+   text(readable,x+6,y+32,rgba(accent(),instruction?1:.7),width<300?7.5:width<400?9:11);
    if(index<2){const from=x+boxWidth,to=from+gap;ctx.beginPath();ctx.moveTo(from,y+23);ctx.lineTo(to,y+23);ctx.strokeStyle=rgba(color,.6);ctx.stroke();if(instruction){const fraction=(age/1.7)%1;ctx.fillStyle=rgba(color,1);ctx.beginPath();ctx.arc(from+(to-from)*fraction,y+23,1.6,0,Math.PI*2);ctx.fill();}}
   });
   const effect=cpuFrame.effect,caption=cpuFrame.forwarding?'EX → ID · '+CPU_REGISTERS[cpuFrame.forwarding.register]+' = '+cpuFrame.forwarding.value:effect?.kind==='memory'?'MEM[0] ← '+effect.value:effect?.kind==='register'?CPU_REGISTERS[effect.register]+' ← '+effect.value:(language==='fr'?'LIRE → DÉCODER → EXÉCUTER':'FETCH → DECODE → EXECUTE');
@@ -119,7 +116,7 @@ export function createScene(canvas) {
   text(String(pose.stacked).padStart(2,'0')+' / 03',width-22,94,rgba(accent(),.83),width<400?8:9,'right');
  }
  function draw(delta=0){
-  if(!width||!height)return;
+  if(!width||!height||covered||!visible||document.hidden)return;
   if(!paused)age+=delta;
   if(paused){panX=targetX;panY=targetY;}else{panX+=(targetX-panX)*.06;panY+=(targetY-panY)*.06;}
   ctx.clearRect(0,0,width,height);floorContext.clearRect(0,0,width,height);solid?.clear();
@@ -129,9 +126,20 @@ export function createScene(canvas) {
   });
   if(mode==='cpu')paintCPU();else if(mode==='robot')paintRobot();else neural.paint(width,height,age,light(),language,panX,panY,solid);
  }
- function tick(now){const delta=last?(now-last)/1000:0;last=now;draw(delta);if(!paused&&visible&&!document.hidden)frame=requestAnimationFrame(tick);}
- function start(){cancelAnimationFrame(frame);last=0;if(!paused&&visible&&!document.hidden)frame=requestAnimationFrame(tick);else draw();}
- function resize(){const r=canvas.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);width=r.width;height=r.height;canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);floorCanvas.width=canvas.width;floorCanvas.height=canvas.height;floorContext.setTransform(dpr,0,0,dpr,0,0);solid?.resize(canvas.width,canvas.height);draw();}
+ function tick(now){
+  if(paused||covered||!visible||document.hidden)return;
+  // Cap touch displays at 30 paints/s and high-refresh desktops at 60.
+  const interval=1000/(coarse.matches?30:60);
+  if(now+.5>=nextDraw){draw(last?Math.min((now-last)/1000,.1):0);last=now;nextDraw=now+interval-Math.max(0,Math.min(now-nextDraw,interval/2));}
+  frame=requestAnimationFrame(tick);
+ }
+ function start(){
+  cancelAnimationFrame(frame);last=nextDraw=0;
+  if(covered||!visible||document.hidden)return;
+  if(mode==='neural')neural.activate();
+  if(!paused)frame=requestAnimationFrame(tick);else draw();
+ }
+ function resize(){const r=canvas.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,coarse.matches?1.5:2);width=r.width;height=r.height;canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);floorCanvas.width=canvas.width;floorCanvas.height=canvas.height;floorContext.setTransform(dpr,0,0,dpr,0,0);solid?.resize(canvas.width,canvas.height);draw();}
  function pointerMove(event){const r=canvas.getBoundingClientRect();targetX=(event.clientX-r.left)/r.width-.5;targetY=(event.clientY-r.top)/r.height-.5;if(paused)draw();}
  function pointerLeave(){targetX=0;targetY=0;if(paused)draw();}
  function visibility(){if(document.hidden)cancelAnimationFrame(frame);else start();}
@@ -143,7 +151,8 @@ export function createScene(canvas) {
  const themeObserver=new MutationObserver(()=>{if(paused)draw();});themeObserver.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
  canvas.dataset.scene=mode;resize();start();
  return {
-  setMode(next){if(!['cpu','robot','neural'].includes(next))return;mode=next;age=0;canvas.dataset.scene=mode;if(mode==='neural')neural.activate();start();},
+  setMode(next){if(!['cpu','robot','neural'].includes(next))return;mode=next;age=0;canvas.dataset.scene=mode;start();},
+  setCovered(value){covered=Boolean(value);start();},
   setLanguage(next){language=next==='en'?'en':'fr';if(paused)draw();},
   toggle(){paused=!paused;start();return paused;},
   get paused(){return paused;},
