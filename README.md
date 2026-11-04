@@ -6,7 +6,7 @@ Portfolio personnel bilingue, conçu autour de l’intelligence artificielle, de
 
 ## Ouvrir le site
 
-**[Voir le portfolio en ligne](https://perso.telecom-paristech.fr/vwoelffel-23/)** · [Vérifications automatiques](https://github.com/Victor11W/portfolio/actions/workflows/verify.yml)
+**[Voir le portfolio en ligne](https://victor.woelffel.com/)** · [Vérifications et publications](https://github.com/Victor11W/portfolio/actions/workflows/verify.yml)
 
 Pour utiliser les sources en local, Node.js 20 ou supérieur est nécessaire (Node 24 est utilisé pour les vérifications). Aucune installation de dépendances npm n’est requise.
 
@@ -93,7 +93,7 @@ Les résultats correspondent aux scores du modèle sur le dessin, pas à une mes
 
 ## Git et GitHub
 
-Les sources du portfolio sont disponibles dans [Victor11W/portfolio](https://github.com/Victor11W/portfolio). Le site est hébergé sur [Télécom Paris](https://perso.telecom-paristech.fr/vwoelffel-23/).
+Les sources du portfolio sont disponibles dans [Victor11W/portfolio](https://github.com/Victor11W/portfolio). Le site est hébergé sur VM01 à l’adresse [victor.woelffel.com](https://victor.woelffel.com/).
 
 La branche publique est `codex/public-portfolio`. Son historique commence avec un instantané des sources vérifiées, après retrait des documents confidentiels. L’ancien historique de travail est conservé uniquement en local sur `codex/portfolio` ; ne pas publier cette branche historique.
 
@@ -109,39 +109,30 @@ git push origin codex/public-portfolio
 
 Envoyer uniquement cette branche. Les options `--all` et `--mirror` ne doivent pas être utilisées : elles incluraient l’historique local qui n’est pas destiné à la publication.
 
-Le workflow GitHub Actions vérifie les sources, lance les tests et construit le site. Il ne publie rien sur l’hébergement SSH.
+Le workflow GitHub Actions vérifie les sources, lance les tests du site et du déploiement, puis construit le site. Sur `codex/public-portfolio`, il publie ensuite le commit vérifié sur VM01. Les autres branches et les pull requests ne déploient pas.
 
 ## Publier et mettre à jour
 
-Le portfolio a été mis en ligne le 4 novembre 2026 : **https://perso.telecom-paristech.fr/vwoelffel-23/**. L’adresse avec `perso.telecom-paris.fr` redirige vers celle-ci.
+Le portfolio est publié sur **https://victor.woelffel.com/**.
 
 1. Modifier les sources de ce dossier. Les textes bilingues sont dans `content.js`, les styles dans `styles.css`, la structure dans `index.html` et les interactions dans `app.js` et les modules associés.
 2. Double-cliquer sur **Ouvrir_Portfolio.cmd** pour prévisualiser les modifications localement.
-3. Double-cliquer sur **Publier_Portfolio.cmd** pour publier. Saisir le mot de passe uniquement lorsque la demande SSH du serveur apparaît dans cette fenêtre. Aucun caractère ne s’affiche pendant la saisie. Laisser la fenêtre ouverte jusqu’au résultat final.
+3. Enregistrer les modifications voulues sur `codex/public-portfolio`, puis envoyer cette seule branche sur GitHub avec `git push origin codex/public-portfolio`.
 
-Le lanceur contrôle le JavaScript, exécute les tests et construit `dist/`. Il envoie uniquement ce dossier, vérifie l’intégrité de l’archive, sauvegarde le site précédent dans le dossier personnel du serveur, met la nouvelle page en place puis contrôle en HTTPS les fichiers publiés. En cas d’échec de cette dernière vérification, le script restaure la sauvegarde. Les fichiers supplémentaires déjà présents sur le serveur sont conservés, à l’exception de l’ancien CV français : ce document retiré est déplacé dans la sauvegarde privée et son absence publique est vérifiée.
+La CI publie uniquement le résultat `dist/`. Les listes de fichiers et SHA-256 sont vérifiés avant la bascule atomique sous verrou. La version précédente est conservée, et une erreur des contrôles HTTPS ou de redirection déclenche le retour arrière. Voir [la configuration et les procédures VM01](docs/VM01_CICD.md).
 
-La même publication est disponible depuis un terminal :
-
-```sh
-npm run deploy
-```
-
-Pour vérifier et préparer une archive sans connexion SSH ni publication :
+Pour préparer localement l’artefact destiné à VM01 :
 
 ```sh
-npm run deploy -- --dry-run
+npm run check
+npm test
+npm run build
+node scripts/ci/package.mjs <SHA_COMPLET_DU_COMMIT>
 ```
 
-Les archives et scripts de préparation restent dans `outputs/deploy-*/`, ignoré par Git. Le nouveau lanceur a été vérifié en mode préparation et son script distant a passé le contrôle syntaxique du shell. La publication initiale a été effectuée et vérifiée séparément via SSH. Le lanceur a ensuite publié avec succès la mise à jour du portrait et de la contribution Emerton, après les 31 tests et une vérification HTTPS des fichiers.
+Les artefacts sont générés dans `outputs/ci-package/`, ignoré par Git. Cette préparation seule n’envoie rien sur le serveur. La configuration initiale de l’environnement GitHub et de sa clé dédiée est décrite dans la documentation VM01.
 
-Le serveur est `perso-vwoelffel-23.lxc.enst.fr`, accessible par `ssh.enst.fr`. Le dossier servi est `/srv/www/vwoelffel-23/`. Aucune installation ni modification d’Apache n’est nécessaire pour publier ce site statique. Les chemins des ressources sont relatifs et les métadonnées de partage utilisent l’URL publique.
-
-```sh
-ssh -J vwoelffel-23@ssh.enst.fr vwoelffel-23@perso-vwoelffel-23.lxc.enst.fr
-```
-
-La sauvegarde de la page initiale « site en construction » est conservée sur le serveur dans `/home/vwoelffel-23/.local/share/portfolio-deployments/2026-11-04.aF4XcL/previous-web.tar.gz`. Les publications suivantes affichent le chemin de leur propre sauvegarde. Le déploiement n’est pas déclenché automatiquement par les modifications locales ou par GitHub Actions : lancer la publication pour chaque nouvelle version à mettre en ligne.
+Les anciens `Publier_Portfolio.cmd` et `npm run deploy` ciblent encore l’hébergement Télécom. Ils ne sont pas utilisés pour publier sur VM01.
 
 ## Direction visuelle
 
