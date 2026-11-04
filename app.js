@@ -32,12 +32,8 @@ function outcomeBlock(project,compact=false){
 function updateSceneText() {
  const t=txt(),prefix=activeScene==='cpu'?'cpu':activeScene==='robot'?'robot':'neural';
  const projectId={cpu:'processor',robot:'robot-simulator',neural:'neural-networks'}[activeScene];
- const projectLink=$('#scene-project-link');
- projectLink.href='#project/'+projectId;
- projectLink.dataset.project=projectId;
- projectLink.firstElementChild.textContent=t.cardActions[projectId];
  const modelLink=$('#scene-model-link');
- modelLink.href=projectLink.href;
+ modelLink.href='#project/'+projectId;
  modelLink.dataset.project=projectId;
  modelLink.setAttribute('aria-label',t.cardActions[projectId]);
  $$('button[data-scene]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.scene===activeScene)));
@@ -53,9 +49,9 @@ function setText() {
  $('.summary-strip .summary-number').textContent=projects.length;
  $('.filter-count').textContent=projects.length;
  document.documentElement.lang=language;
- document.title=language==='fr'?'Victor Woelffel — Du signal au système':'Victor Woelffel — From signal to system';
+ document.title=language==='fr'?'Victor Woelffel — Projets en IA et systèmes embarqués':'Victor Woelffel — AI and embedded systems projects';
  $$('[data-i18n]').forEach(el=>{const value=t[el.dataset.i18n];if(typeof value==='string')el.textContent=value;});
- const description=language==='fr'?'Victor Woelffel, élève ingénieur à Télécom Paris. Projets, recherche et expériences en IA, systèmes embarqués et robotique.':'Victor Woelffel, Télécom Paris engineering student. Projects, research and experience in AI, embedded systems and robotics.';
+ const description=language==='fr'?'Les projets de Victor Woelffel en IA et systèmes embarqués, avec leurs explications, démonstrations, rapports et code.':'Victor Woelffel’s AI and embedded systems projects, with explanations, demos, reports and source code.';
  $('meta[name="description"]').content=description;
  $('meta[property="og:title"]').content=document.title;
  $('meta[property="og:description"]').content=description;

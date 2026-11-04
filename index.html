@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark light">
   <meta name="theme-color" content="#10120f">
-  <meta name="description" content="Victor Woelffel, élève ingénieur à Télécom Paris. Projets, recherche et expériences à l’intersection de l’intelligence artificielle et des systèmes embarqués.">
-  <meta property="og:title" content="Victor Woelffel — Du signal au système">
-  <meta property="og:description" content="Un portfolio d’ingénieur : IA, systèmes embarqués et robotique. Explorez les projets et le parcours de Victor Woelffel.">
+  <meta name="description" content="Les projets de Victor Woelffel en IA et systèmes embarqués, avec leurs explications, démonstrations, rapports et code.">
+  <meta property="og:title" content="Victor Woelffel — Projets en IA et systèmes embarqués">
+  <meta property="og:description" content="Les projets de Victor Woelffel en IA et systèmes embarqués, avec leurs explications, démonstrations, rapports et code.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://perso.telecom-paristech.fr/vwoelffel-23/">
   <meta property="og:image" content="https://perso.telecom-paristech.fr/vwoelffel-23/assets/social-card.png">
@@ -15,7 +15,7 @@
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="fr_FR">
-  <title>Victor Woelffel — Du signal au système</title>
+  <title>Victor Woelffel — Projets en IA et systèmes embarqués</title>
   <link rel="canonical" href="https://perso.telecom-paristech.fr/vwoelffel-23/">
   <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
   <link rel="stylesheet" href="./styles.css">
@@ -49,16 +49,15 @@
     <section class="hero section-shell" aria-labelledby="hero-title">
       <div class="hero-copy">
         <p class="eyebrow"><span class="tiny-cross" aria-hidden="true">+</span><span data-i18n="eyebrow">Élève ingénieur · Télécom Paris</span></p>
-        <h1 id="hero-title"><span data-i18n="hero1">Du signal</span><br><span class="headline-second" data-i18n="hero2">au système</span><span class="accent">.</span></h1>
-        <p class="hero-intro" data-i18n="intro">Je suis Victor. Mes projets vont du décodage d’une instruction machine à la reconnaissance d’un chiffre manuscrit. Ici, tu peux essayer les deux.</p>
+        <h1 id="hero-title"><span data-i18n="hero1">Comprendre</span><br><span class="headline-second" data-i18n="hero2">le bas niveau</span><span class="accent">.</span></h1>
+        <p class="hero-intro" data-i18n="intro">Je rassemble ici mes projets pour montrer ce que j’ai réalisé et ce que j’aime apprendre. Chaque fiche présente le travail effectué, avec une démo, du code ou un rapport selon le projet.</p>
         <div class="hero-actions">
           <a class="button button-primary" href="#projects"><span data-i18n="viewProjects">Explorer mes projets</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15m-6-6 6 6 6-6"/></svg></a>
-          <a id="scene-project-link" class="hero-project-link" href="#project/processor" data-project="processor"><span>Faire tourner le processeur</span><span aria-hidden="true">→</span></a>
         </div>
       </div>
       <div class="hero-art" id="hero-art" role="group" aria-labelledby="scene-title">
         <div class="art-topline mono"><span data-i18n="sceneKicker">VW / SYSTÈMES × IA</span><span id="scene-index" aria-hidden="true">01 / 03</span></div>
-        <p class="scene-heading" id="scene-title">Une instruction prend vie.</p>
+        <p class="scene-heading" id="scene-title">Comprendre l’architecture CPU</p>
         <canvas class="scene-underlay" id="scene-underlay" aria-hidden="true"></canvas>
         <canvas class="scene-solid" id="scene-solid" aria-hidden="true"></canvas>
         <a id="scene-model-link" class="scene-model-link" href="#project/processor" data-project="processor" aria-label="Ouvrir le processeur 16 bits du rapport">
@@ -72,7 +71,7 @@
           </div>
           <button class="icon-button" id="motion-toggle" type="button" aria-label="Mettre l’animation en pause" aria-pressed="false"></button>
         </div>
-        <p class="scene-description" id="scene-description">Fetch, Decode, Execute : trois étages pour suivre un programme, ses registres et ses accès mémoire.</p>
+        <p class="scene-description" id="scene-description">L’architecture des processeurs me passionne. J’aime comprendre comment leurs composants exécutent un programme, instruction après instruction.</p>
       </div>
     </section>
     <nav class="summary-strip section-shell" aria-label="Quelques repères">
@@ -98,23 +97,23 @@
     </section>
     <section id="journey" class="journey-section section-space" aria-labelledby="journey-title">
       <div class="section-shell">
-        <div class="section-heading"><p class="section-index mono"><span>02 /</span> <span data-i18n="journeyLabel">Expériences & formation</span></p><div class="heading-row"><h2 id="journey-title"><span data-i18n="journeyTitle">Apprendre en</span><br><span class="muted-heading" data-i18n="journeyAccent">faisant.</span></h2><p class="section-intro" data-i18n="journeyIntro">La recherche, les projets concrets et deux environnements professionnels pour relier la théorie à la pratique.</p></div></div>
+        <div class="section-heading"><p class="section-index mono"><span>02 /</span> <span data-i18n="journeyLabel">Expériences & formation</span></p><div class="heading-row"><h2 id="journey-title"><span data-i18n="journeyTitle">Études et</span><br><span class="muted-heading" data-i18n="journeyAccent">stages.</span></h2><p class="section-intro" data-i18n="journeyIntro">Mon parcours à Télécom Paris et à Montréal, et mes stages chez Capgemini Engineering et Emerton Data.</p></div></div>
         <div class="experience-list" id="experience-list"></div>
         <a class="publication-card" id="publication" href="https://doi.org/10.1109/ICCRAIDS67816.2026.11519663" target="_blank" rel="noopener noreferrer"><span class="publication-icon" aria-hidden="true">↗</span><div><p class="mono" data-i18n="publicationLabel">Publication · IEEE / ICCRAIDS 2026</p><h3>Optimization of cVEP Classification Approaches for 3D VR Based Brain Computer Interfaces</h3><span data-i18n="coauthor">Co-premier auteur</span></div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14"/></svg></a>
         <div class="education-block"><h3 class="small-heading" data-i18n="education">Le parcours académique</h3><div class="education-grid" id="education-grid"></div></div>
       </div>
     </section>
     <section id="about" class="about-section section-shell section-space" aria-labelledby="about-title">
-      <p class="section-index mono"><span>03 /</span> <span data-i18n="aboutLabel">Un peu plus loin que le code</span></p>
-      <div class="about-layout"><div class="about-copy"><h2 id="about-title"><span data-i18n="aboutTitle">Curieux des systèmes.</span><br><span class="muted-heading" data-i18n="aboutAccent">Et du reste.</span></h2><p data-i18n="aboutP1">Ce qui m’intéresse, c’est le passage d’une idée à un système qui fonctionne. Comprendre une architecture, expérimenter un modèle, confronter le résultat à des contraintes réelles.</p><p data-i18n="aboutP2">À Télécom Paris, puis en échange à Montréal, je construis un parcours à l’intersection de l’IA et de l’embarqué.</p><p class="languages mono" data-i18n="languages">Français natif · C2 / Anglais · B2.2</p></div>
+      <p class="section-index mono"><span>03 /</span> <span data-i18n="aboutLabel">À propos</span></p>
+      <div class="about-layout"><div class="about-copy"><h2 id="about-title"><span data-i18n="aboutTitle">Ce qui me donne</span><br><span class="muted-heading" data-i18n="aboutAccent">envie d’apprendre.</span></h2><p data-i18n="aboutP1">J’aime prendre le temps de comprendre comment un programme fonctionne, jusqu’aux opérations que le processeur exécute. C’est aussi ce qui me plaît dans l’IA : regarder les calculs et les algorithmes derrière les résultats.</p><p data-i18n="aboutP2">Les progrès de l’IA me donnent envie de participer à des projets plus ambitieux, notamment en robotique. À Télécom Paris et pendant mon échange à Montréal, je continue à explorer ces sujets et à les mettre en pratique.</p><p class="languages mono" data-i18n="languages">Français natif · C2 / Anglais · B2.2</p></div>
       <div class="toolbox"><div class="toolbox-heading"><span class="tiny-cross" aria-hidden="true">+</span><h3 data-i18n="toolsTitle">Ma boîte à outils</h3></div><div id="skills-list"></div><p class="toolbox-note" data-i18n="toolsNote">Des outils pratiqués en stage, en cours ou en projet. Pas de jauges : les réalisations donnent le contexte.</p></div></div>
       <div class="beyond-grid"><div class="club-card"><p class="mono" data-i18n="clubRole">Vice-président · juin 2024 à juin 2025</p><h3 data-i18n="clubTitle">Télécom Gaming Club</h3><p data-i18n="clubBody">Coordination de 20 membres, organisation de tournois de plus de 100 participants et gestion d’un budget d’environ 8 000 € pour un tournoi public.</p><div class="club-number" aria-hidden="true">20<span>↗</span></div></div><div class="interests-card"><p class="mono" data-i18n="interestsTitle">Hors écran, ou presque</p><div class="interest-list" id="interest-list"></div><svg class="interest-art" viewBox="0 0 190 150" aria-hidden="true"><path d="M30 130 90 20 150 130Z M90 20 110 90 150 130 M30 130 110 90 M55 83l24 12M112 61l-21 15M65 118l18-17" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="110" cy="90" r="6"/><path d="M158 20v22m-11-11h22M22 39v14m-7-7h14"/></svg></div></div>
     </section>
     <section id="contact" class="contact-section section-space" aria-labelledby="contact-title">
-      <div class="section-shell"><p class="section-index mono"><span>04 /</span> <span data-i18n="contactLabel">La prochaine étape</span></p><div class="contact-layout"><div><h2 id="contact-title"><span data-i18n="contactTitle">Construisons</span><br><span data-i18n="contactAccent">la suite.</span><span class="contact-asterisk" aria-hidden="true">✳</span></h2><p class="contact-intro" data-i18n="contactIntro">Un projet, une question technique ou l’envie d’échanger autour de l’IA et des systèmes embarqués ? Écris-moi.</p><a class="contact-email" href="mailto:v.woelffel.94@gmail.com"><span data-i18n="emailCTA">Parlons-en</span><span aria-hidden="true">↗</span></a></div><div class="contact-links"><div class="email-copy"><span class="mono">v.woelffel.94@gmail.com</span><button class="icon-button" id="copy-email" type="button" aria-label="Copier l’adresse e-mail"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M15 8V4H4v11h4"/></svg></button></div><a href="./assets/CV_Victor_Woelffel_EN.pdf" id="cv-download" download="CV_Victor_Woelffel_EN.pdf"><span data-i18n="download">Mon CV en anglais · PDF</span><span aria-hidden="true">↓</span></a><a href="https://www.linkedin.com/in/victor-woelffel-a84b60292/" target="_blank" rel="noopener noreferrer"><span>LinkedIn</span><span aria-hidden="true">↗</span></a><a href="https://github.com/Victor11W" target="_blank" rel="noopener noreferrer"><span>GitHub</span><span aria-hidden="true">↗</span></a><p class="contact-note" data-i18n="contactNote">Pour échanger autour des projets et de leur conception.</p></div></div></div>
+      <div class="section-shell"><p class="section-index mono"><span>04 /</span> <span data-i18n="contactLabel">Contact</span></p><div class="contact-layout"><div><h2 id="contact-title"><span data-i18n="contactTitle">Échanger sur</span><br><span data-i18n="contactAccent">un projet.</span><span class="contact-asterisk" aria-hidden="true">✳</span></h2><p class="contact-intro" data-i18n="contactIntro">Un projet, une question technique ou l’envie d’échanger autour de l’IA et des systèmes embarqués ? Écris-moi.</p><a class="contact-email" href="mailto:v.woelffel.94@gmail.com"><span data-i18n="emailCTA">M’écrire</span><span aria-hidden="true">↗</span></a></div><div class="contact-links"><div class="email-copy"><span class="mono">v.woelffel.94@gmail.com</span><button class="icon-button" id="copy-email" type="button" aria-label="Copier l’adresse e-mail"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M15 8V4H4v11h4"/></svg></button></div><a href="./assets/CV_Victor_Woelffel_EN.pdf" id="cv-download" download="CV_Victor_Woelffel_EN.pdf"><span data-i18n="download">Mon CV en anglais · PDF</span><span aria-hidden="true">↓</span></a><a href="https://www.linkedin.com/in/victor-woelffel-a84b60292/" target="_blank" rel="noopener noreferrer"><span>LinkedIn</span><span aria-hidden="true">↗</span></a><a href="https://github.com/Victor11W" target="_blank" rel="noopener noreferrer"><span>GitHub</span><span aria-hidden="true">↗</span></a><p class="contact-note" data-i18n="contactNote">Pour échanger autour des projets et de leur conception.</p></div></div></div>
     </section>
   </main>
-  <footer class="site-footer section-shell"><a href="#top" class="footer-name" aria-label="Victor Woelffel — retour en haut">VICTOR WOELFFEL<span>.</span></a><div class="footer-bottom"><p><span>© 2026 Victor Woelffel</span><span data-i18n="footer">Conçu avec curiosité. Construit avec soin.</span></p><a class="back-top mono" href="#top"><span data-i18n="backTop">Retour en haut</span> ↑</a></div><p class="privacy-note" data-i18n="privacy">Sans cookies de suivi ni statistiques externes.</p></footer>
+  <footer class="site-footer section-shell"><a href="#top" class="footer-name" aria-label="Victor Woelffel — retour en haut">VICTOR WOELFFEL<span>.</span></a><div class="footer-bottom"><p><span>© 2026 Victor Woelffel</span><span data-i18n="footer">Portfolio personnel · IA et systèmes embarqués</span></p><a class="back-top mono" href="#top"><span data-i18n="backTop">Retour en haut</span> ↑</a></div><p class="privacy-note" data-i18n="privacy">Sans cookies de suivi ni statistiques externes.</p></footer>
   <dialog id="project-dialog" class="project-dialog" aria-labelledby="detail-title"><div class="dialog-toolbar"><span class="mono" id="detail-index"></span><button class="icon-button dialog-close" id="close-project" type="button" aria-label="Fermer">×</button></div><div id="project-detail"></div><div class="dialog-bottom"><button class="text-button" id="previous-project" type="button"><span aria-hidden="true">←</span><span data-i18n="previousProject">Projet précédent</span></button><button class="text-button" id="next-project" type="button"><span data-i18n="nextProject">Projet suivant</span><span aria-hidden="true">→</span></button></div></dialog>
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
   <noscript><div class="noscript-note">Le portfolio interactif nécessite JavaScript. Victor Woelffel présente ses projets en IA, systèmes embarqués et robotique. Contact : <a href="mailto:v.woelffel.94@gmail.com">v.woelffel.94@gmail.com</a>.</div></noscript>

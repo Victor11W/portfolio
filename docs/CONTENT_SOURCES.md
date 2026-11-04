@@ -9,6 +9,8 @@
 - Aucun contenu LinkedIn n’a été extrait : la page n’était pas accessible par l’outil de lecture. Le site n’utilise aucune photo ni image issue de LinkedIn.
 - Les deux sites de référence ont été consultés pour la direction visuelle. Aucun code, texte de présentation ou image n’en a été copié.
 
+Les textes de motivation de l’accueil et de la section À propos reprennent les précisions de Victor du 4 novembre 2026 : intérêt pour l’architecture CPU et le bas niveau, plaisir de comprendre les algorithmes en détail et souhait de contribuer à des projets de robotique à grande échelle grâce aux progrès de l’IA. Ces souhaits ne décrivent pas des réalisations déjà accomplies.
+
 ## Correspondance des dossiers
 
 | ID | Source personnelle |
