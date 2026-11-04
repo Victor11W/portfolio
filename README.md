@@ -6,28 +6,30 @@ Portfolio personnel bilingue, conçu autour de l’intelligence artificielle, de
 
 ## Ouvrir le site
 
-Sous Windows, double-cliquer sur **Ouvrir_Portfolio.cmd**. Le lanceur reconstruit le site si Node.js est installé, puis ouvre la version locale dans le navigateur.
+**[Voir le portfolio en ligne](https://perso.telecom-paristech.fr/vwoelffel-23/)** · [Vérifications automatiques](https://github.com/Victor11W/portfolio/actions/workflows/verify.yml)
 
-La version déjà construite est aussi accessible en ouvrant **dist/index.html**. Elle fonctionne directement depuis les fichiers, sans installation et sans serveur.
-
-Pour développer, avec Node.js 20 ou supérieur (Node 24 utilisé pour la vérification) :
+Pour utiliser les sources en local, Node.js 20 ou supérieur est nécessaire (Node 24 est utilisé pour les vérifications). Aucune installation de dépendances npm n’est requise.
 
 ```sh
+git clone https://github.com/Victor11W/portfolio.git
+cd portfolio
 npm run dev
 ```
 
-Ouvrir l’adresse affichée : http://127.0.0.1:4173. Arrêter le serveur avec Ctrl+C. Aucune installation de dépendances n’est nécessaire.
+Ouvrir l’adresse affichée : [http://127.0.0.1:4173](http://127.0.0.1:4173). Arrêter le serveur avec Ctrl+C.
+
+Sous Windows, **Ouvrir_Portfolio.cmd** construit le site puis ouvre la version locale dans le navigateur. Pour construire manuellement, lancer `npm run build`, puis ouvrir `dist/index.html`. Le bundle construit fonctionne directement depuis les fichiers, sans serveur. Le dossier `dist/` est généré localement et n’est pas inclus dans Git.
 
 ## Ce que contient le portfolio
 
-- Douze dossiers : projets académiques, projets techniques, hackathon et travail de recherche.
+- Treize dossiers : projets académiques, projets techniques, hackathon, recherche et contribution en optimisation.
 - Fiches détaillées, liens directs sous la forme `#project/optiframe`, navigation entre projets.
 - Filtres par domaine et recherche tolérant les accents et les ligatures.
 - Deux stages, formation, publication scientifique, association et centres d’intérêt.
 - Français et anglais, thème sombre et thème clair.
 - Navigation qui s’efface en descendant et réapparaît en remontant, animations désactivables et réduction des mouvements respectée.
 - Illustrations SVG originales et deux scènes 3D : processeur avec pipeline et bras robotisé qui empile trois cubes, plus un réseau neuronal en 2D.
-- CV PDF existants et validés, adaptés à la langue sélectionnée.
+- CV anglais existant et validé, accessible depuis les deux langues du site.
 - Rapport d’architecture RISC-V et poster Q-learning téléchargeables depuis leurs fiches.
 - Atelier de reconnaissance de chiffres : dessin, entrée 28 × 28, activations et trois scores du CNN sauvegardé.
 - Processeur pas à pas, interruption STM32 et transfert d’un pixel Avalon / FIFO dans les fiches concernées.
